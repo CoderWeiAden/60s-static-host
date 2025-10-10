@@ -40,7 +40,8 @@ export async function fetchAndProcessArticle(date: string): Promise<SavedData | 
   let parsedArticle = await parseArticleUrlViaLLM(detailLink)
 
   if (!parsedArticle.news.length) {
-    console.log('LLM parser failed, fallback to standard parser')
+    console.log('LLM parser failed, fallback to standard parser...')
+
     parsedArticle = await parseArticleUrl(detailLink)
   }
 

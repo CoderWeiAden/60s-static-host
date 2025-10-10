@@ -1,10 +1,10 @@
 {
   "name": "60s",
   "type": "module",
-  "packageManager": "pnpm@10.14.0",
+  "packageManager": "pnpm@10.18.2",
   "scripts": {
     "update": "esno ./src/update-60s.ts",
-    "update:local": "esno --env-file=.env ./src/update-60s.ts --date=2025-10-09",
+    "update:local": "esno --env-file=.env ./src/update-60s.ts",
     "debug": "esno ./debug/index.ts"
   },
   "author": "Viki <hi@viki.moe> (https://github.com/vikiboss)",
@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/node": "^22.17.1",
     "cheerio": "^1.1.2",
-    "esno": "^4.8.0"
+    "esno": "^4.8.0",
+    "pangu": "^7.2.0"
   }
 }
