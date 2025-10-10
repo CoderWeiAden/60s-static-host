@@ -45,6 +45,7 @@ jobs:
         env:
           WECHAT_TOKEN: ${{ secrets.WECHAT_TOKEN }}
           WECHAT_COOKIE: ${{ secrets.WECHAT_COOKIE }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           # config git
           git config --local user.email "bot@github.com"

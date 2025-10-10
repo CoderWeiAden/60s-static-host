@@ -82,6 +82,7 @@ export async function parseArticleUrlViaLLM(url: string): Promise<ParsedArticle>
   const apiKey = process.env.GEMINI_API_KEY
 
   if (!apiKey) {
+    console.log("No Gemini API key provided, can't use LLM to parse article.")
     return EMPTY_RESULT
   }
 
@@ -96,6 +97,7 @@ export async function parseArticleUrlViaLLM(url: string): Promise<ParsedArticle>
   const mainHtml = $('#page-content').html() || ''
 
   if (!mainHtml) {
+    console.error('No main HTML content found in the article.')
     return EMPTY_RESULT
   }
 
