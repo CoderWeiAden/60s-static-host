@@ -1,207 +1,492 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>60s Static Data Host</title>
-    <meta name="description" content="Automated daily news aggregation service with static JSON hosting">
+    <title>60s 每日新闻 - Daily News API</title>
+    <meta name="description" content="Automated daily news aggregation service with JSON API and image hosting">
     <style>
-        :root {
-            --bg-color: #ffffff;
-            --text-color: #1a1a1a;
-            --primary-color: #2563eb;
-            --secondary-color: #4b5563;
-            --border-color: #e5e7eb;
-            --code-bg: #f3f4f6;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-color: #1a1a1a;
-                --text-color: #ffffff;
-                --primary-color: #3b82f6;
-                --secondary-color: #9ca3af;
-                --border-color: #374151;
-                --code-bg: #1f2937;
-            }
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #141419;
+            --bg-card: #1a1a24;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --border: #27272a;
+            --glow: rgba(59, 130, 246, 0.3);
+        }
+
         body {
-            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             line-height: 1.6;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+            z-index: 0;
+            pointer-events: none;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem 1rem;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
         }
 
         header {
             text-align: center;
-            padding-bottom: 2rem;
-            margin-bottom: 3rem;
-            border-bottom: 1px solid var(--border-color);
+            padding: 4rem 0 3rem;
         }
 
-        h1 {
-            font-size: 2.5rem;
+        .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 1rem;
-            color: var(--primary-color);
+            letter-spacing: -0.02em;
         }
 
-        .card-grid {
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .main-grid {
             display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 2rem;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             margin-bottom: 3rem;
         }
 
         .card {
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
             padding: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
-        .endpoint-list {
-            display: grid;
-            gap: 1.5rem;
-            margin: 2rem 0;
+        .card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 30px var(--glow);
+            transform: translateY(-2px);
         }
 
-        pre {
-            background-color: var(--code-bg);
-            padding: 1rem;
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
             border-radius: 8px;
-            overflow-x: auto;
-            margin: 1rem 0;
-            font-size: 0.9em;
+            font-size: 1rem;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 6px;
-            background-color: var(--primary-color);
+        .preview-section {
+            grid-column: 1 / -1;
+        }
+
+        .preview-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .date-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .date-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border: none;
+            border-radius: 0.5rem;
             color: white;
-            font-size: 0.875rem;
-            margin-right: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .image-preview {
+            background: var(--bg-secondary);
+            border-radius: 0.75rem;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .json-preview {
+            background: var(--bg-secondary);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            overflow-x: auto;
+            max-height: 600px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .json-preview pre {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .news-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .news-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .news-item:last-child {
+            border-bottom: none;
+        }
+
+        .endpoint-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .endpoint {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .endpoint code {
+            color: var(--accent-cyan);
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            padding: 0.4rem 0.8rem;
+            background: var(--accent-blue);
+            border: none;
+            border-radius: 0.25rem;
+            color: white;
+            cursor: pointer;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-purple);
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 2rem;
+        }
+
+        .error {
+            padding: 1rem;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 0.5rem;
+            color: #fca5a5;
         }
 
         footer {
-            margin-top: 4rem;
             text-align: center;
-            color: var(--secondary-color);
-            font-size: 0.875rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-color);
+            padding: 3rem 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
 
-        @media (max-width: 768px) {
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid, .preview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
             .container {
                 padding: 1rem;
             }
-            
-            h1 {
+
+            .logo {
                 font-size: 2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .preview-controls {
+                flex-direction: column;
+            }
+
+            .date-input {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
+    <div class="gradient-bg"></div>
+
     <div class="container">
         <header>
-            <h1>60s Static Data Host</h1>
-            <p>Automated daily news aggregation with multi-CDN hosting</p>
+            <div class="logo">60s 每日新闻</div>
+            <div class="subtitle">自动化新闻聚合 · 多 CDN 托管 · REST API</div>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span>服务运行中</span>
+            </div>
         </header>
 
-        <div class="card-grid">
+        <div class="main-grid">
             <div class="card">
-                <h2>Project Overview</h2>
-                <p>Automated daily news aggregation service providing structured JSON data through multiple CDN endpoints.</p>
-                <ul style="padding-left: 1.5rem; margin-top: 1rem;">
-                    <li>🔄 Auto-updated via GitHub Actions</li>
-                    <li>📰 Curated news summaries</li>
-                    <li>🚀 Multi-CDN distribution</li>
-                    <li>🔑 Simple REST API access</li>
+                <div class="card-title">
+                    <span class="icon">📡</span>
+                    API 端点
+                </div>
+                <div class="endpoint-grid">
+                    <div class="endpoint">
+                        <code>https://60s-static.viki.moe/60s/[date].json</code>
+                        <button class="copy-btn" onclick="copyEndpoint('https://60s-static.viki.moe/60s/', '.json')">复制</button>
+                    </div>
+                    <div class="endpoint">
+                        <code>https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/[date].json</code>
+                        <button class="copy-btn" onclick="copyEndpoint('https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/', '.json')">复制</button>
+                    </div>
+                    <div class="endpoint">
+                        <code>https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/[date].png</code>
+                        <button class="copy-btn" onclick="copyEndpoint('https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/', '.png')">复制</button>
+                    </div>
+                </div>
+                <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    将 <code>[date]</code> 替换为 <code>YYYY-MM-DD</code> 格式，如 <code>2025-01-15</code>
+                </p>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <span class="icon">📊</span>
+                    数据格式
+                </div>
+                <ul class="news-list">
+                    <li class="news-item"><strong>date</strong> - 日期 (YYYY-MM-DD)</li>
+                    <li class="news-item"><strong>news</strong> - 新闻数组 (~15条)</li>
+                    <li class="news-item"><strong>cover</strong> - 封面图片 URL</li>
+                    <li class="news-item"><strong>image</strong> - 生成的图片 URL</li>
+                    <li class="news-item"><strong>tip</strong> - 每日金句</li>
+                    <li class="news-item"><strong>link</strong> - 原文链接</li>
+                    <li class="news-item"><strong>created_at</strong> - 创建时间戳</li>
+                    <li class="news-item"><strong>updated_at</strong> - 更新时间戳</li>
                 </ul>
             </div>
 
-            <div class="card">
-                <h2>API Endpoints</h2>
-                <div class="endpoint-list">
-                    <div>
-                        <span class="badge">Vercel</span>
-                        <code>https://60s-static-host.vercel.app/60s/[date].json</code>
-                    </div>
-                    <div>
-                        <span class="badge">GitHub</span>
-                        <code>https://raw.githubusercontent.com/vikiboss/60s-static-host/main/static/60s/[date].json</code>
-                    </div>
-                    <div>
-                        <span class="badge">jsDelivr</span>
-                        <code>https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/[date].json</code>
-                    </div>
-                    <div>
-                        <span class="badge">jsDelivr Mirror</span>
-                        <code>https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/60s/[date].json</code>
-                    </div>
+            <div class="card preview-section">
+                <div class="card-title">
+                    <span class="icon">🔍</span>
+                    实时预览
                 </div>
-                <p style="margin-top: 1rem;">Replace <code>[date]</code> with <code>YYYY-MM-DD</code> format (e.g. 2025-10-08)</p>
+                <div class="preview-controls">
+                    <input type="date" id="dateInput" class="date-input" value="">
+                    <button class="btn" onclick="loadData()">加载数据</button>
+                    <button class="btn" onclick="loadToday()">今日数据</button>
+                </div>
+                <div id="previewContainer"></div>
             </div>
         </div>
 
-        <div class="card" style="margin-bottom: 3rem;">
-            <h2>Data Structure</h2>
-            <pre><code>{
-  "date": "2025-10-08",
-  "news": ["...", "..."],
-  "tip": "Daily inspiration quote",
-  "cover": "IMAGE_URL",
-  "link": "SOURCE_URL",
-  "created_at": 1740783600000
-}</code></pre>
-        </div>
-
-        <div class="card">
-            <h2>Project Info</h2>
-            <p>
-                <span class="badge">GitHub</span>
-                <a href="https://github.com/vikiboss/60s-static-host" target="_blank" rel="noopener">
-                    https://github.com/vikiboss/60s-static-host
-                </a>
-            </p>
-            <p style="margin-top: 1rem;">
-                <span class="badge">License</span>
-                MIT License - Open source with attribution required
-            </p>
-        </div>
-
         <footer>
-            <p>© 2025 60s Static Host Project. Data sourced from public networks. No accuracy guarantees provided.</p>
-            <p style="margin-top: 0.5rem;">Not affiliated with any news organizations.</p>
+            <p>
+                <a href="https://github.com/vikiboss/60s-static-host" target="_blank" rel="noopener">GitHub</a> ·
+                数据来源于公开网络 · MIT License
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem;">
+                自动更新于每日 00:00-10:00 (UTC+8)
+            </p>
         </footer>
     </div>
 
     <script>
-        // Auto-update date example
+        // 初始化日期输入为今天
+        function initDate() {
+            const today = new Date();
+            const dateStr = formatDate(today);
+            document.getElementById('dateInput').value = dateStr;
+        }
+
         function formatDate(date) {
             return date.toISOString().split('T')[0];
         }
-        document.querySelectorAll('.date-example').forEach(el => {
-            el.textContent = formatDate(new Date());
-        });
+
+        function loadToday() {
+            const today = new Date();
+            document.getElementById('dateInput').value = formatDate(today);
+            loadData();
+        }
+
+        async function loadData() {
+            const date = document.getElementById('dateInput').value;
+            if (!date) {
+                alert('请选择日期');
+                return;
+            }
+
+            const container = document.getElementById('previewContainer');
+            container.innerHTML = '<div class="loading">加载中...</div>';
+
+            try {
+                const jsonUrl = `https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/${date}.json`;
+                const imageUrl = `https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/${date}.png`;
+
+                const response = await fetch(jsonUrl);
+                if (!response.ok) throw new Error('数据加载失败');
+
+                const data = await response.json();
+
+                container.innerHTML = `
+                    <div class="preview-grid">
+                        <div class="image-preview">
+                            <img src="${imageUrl}" alt="每日新闻图片" onerror="this.parentElement.innerHTML='<div style=&quot;color: var(--text-secondary)&quot;>图片加载失败</div>'">
+                        </div>
+                        <div class="json-preview">
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = `<div class="error">加载失败: ${error.message}<br>该日期可能没有数据，请尝试其他日期</div>`;
+            }
+        }
+
+        function copyEndpoint(prefix, suffix) {
+            const date = document.getElementById('dateInput').value || '2025-01-15';
+            const url = prefix + date + suffix;
+            navigator.clipboard.writeText(url).then(() => {
+                alert('已复制到剪贴板！\n' + url);
+            }).catch(() => {
+                alert('复制失败，请手动复制');
+            });
+        }
+
+        // 页面加载时初始化
+        initDate();
+        loadData();
     </script>
 </body>
 </html>

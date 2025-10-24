@@ -89,9 +89,41 @@ All data follows this structure (see README.md for full example):
 - Static paths: `static/60s` for JSON, `static/images` for PNG
 - User agent string for WeChat requests
 
+## API Endpoints & CDN Distribution
+
+The service provides multi-CDN access for both JSON and PNG files:
+
+**JSON Data:**
+- Primary: `https://60s-static.viki.moe/60s/[date].json`
+- jsDelivr: `https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/[date].json`
+- jsDelivr Mirror: `https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/60s/[date].json`
+
+**PNG Images:**
+- jsDelivr Mirror: `https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/[date].png`
+
+Replace `[date]` with `YYYY-MM-DD` format (e.g., `2025-01-15`)
+
+## Static Homepage (static/index.html)
+
+The project homepage features:
+- Modern dark theme with gradient backgrounds and hover effects
+- Real-time data preview with date selector
+- Interactive JSON and image viewer
+- One-click copy buttons for API endpoints
+- Responsive design with mobile support
+- Auto-loads today's data on page load
+
+**Key Features:**
+- Dark theme with blue/purple gradient accents
+- Live preview of JSON data and generated PNG images
+- Date picker for exploring historical data
+- Copy-to-clipboard functionality for API endpoints
+- Error handling for missing dates
+
 ## Troubleshooting
 
 - If update fails, check WeChat credentials (token/cookie may expire)
 - LLM parsing requires Gemini API key; fallback parser is less reliable
 - Chromium executable path differs between CI (`.chromium/chrome-linux/chrome`) and local (`/Applications/Google Chrome.app`)
 - Font rendering issues in CI are addressed by explicit Noto CJK SC configuration
+- The homepage loads data from jsDelivr CDN for better performance and caching
