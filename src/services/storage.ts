@@ -3,7 +3,7 @@ import fsSync from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
 import { PATHS } from '../constants'
-import { log } from '../utils'
+import { formatSavedData, log } from '../utils'
 
 export class StorageService {
   private readonly projectRoot = getProjectRoot()
@@ -33,7 +33,8 @@ export class StorageService {
 
   async saveData(date: string, data: SavedData): Promise<void> {
     const filePath = this.getDataFilePath(date)
-    await writeJsonFile(filePath, data)
+    const formattedData = formatSavedData(data)
+    await writeJsonFile(filePath, formattedData)
     log(`Data of [${date}] saved`)
   }
 

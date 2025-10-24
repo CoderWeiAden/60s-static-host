@@ -1,8 +1,8 @@
+import { log } from '../utils'
 import { Suspense } from 'react'
 import { IS_IN_CI } from '../constants'
 import puppeteer, { Browser } from 'puppeteer-core'
 import { renderToReadableStream } from 'react-dom/server'
-import { log } from '../utils'
 
 class RenderService {
   #browser: Browser | null = null

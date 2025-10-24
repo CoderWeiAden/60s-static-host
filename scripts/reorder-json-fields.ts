@@ -1,58 +1,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { PATHS } from '../src/constants'
+import { formatSavedData } from '../src/utils'
 
-interface NewsData {
-  date: string
-  news: string[]
-  cover?: string
-  tip?: string
-  image?: string
-  link?: string
-  audio?: {
-    music?: string
-    news?: string
-  }
-  created?: string
-  created_at?: number
-  updated?: string
-  updated_at?: number
-}
-
-// 定义字段顺序
-const FIELD_ORDER = [
-  'date',
-  'news',
-  'cover',
-  'tip',
-  'image',
-  'link',
-  'audio',
-  'created',
-  'created_at',
-  'updated',
-  'updated_at',
-]
-
-function reorderFields(data: NewsData): NewsData {
-  const ordered: any = {}
-
-  // 按照指定顺序添加字段
-  for (const field of FIELD_ORDER) {
-    if (field in data) {
-      ordered[field] = data[field as keyof NewsData]
-    }
-  }
-
-  // 添加任何未在 FIELD_ORDER 中列出的字段
-  for (const key in data) {
-    if (!FIELD_ORDER.includes(key)) {
-      ordered[key] = data[key as keyof NewsData]
-    }
-  }
-
-  return ordered
-}
+import type { SavedData } from '../src/services/storage'
 
 async function reorderJsonFields(): Promise<void> {
   const projectRoot = new URL('..', import.meta.url).pathname.replace(/\/$/, '')
@@ -76,10 +27,10 @@ async function reorderJsonFields(): Promise<void> {
     try {
       // 读取 JSON 文件
       const content = fs.readFileSync(filePath, 'utf-8')
-      const data: NewsData = JSON.parse(content)
+      const data: SavedData = JSON.parse(content)
 
       // 重新排序字段
-      const reordered = reorderFields(data)
+      const reordered = formatSavedData(data)
 
       // 写回文件
       fs.writeFileSync(filePath, JSON.stringify(reordered, null, 2) + '\n', 'utf-8')
