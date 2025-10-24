@@ -7,41 +7,13 @@
     <meta name="description" content="每天60秒读懂世界 - 每日新闻精选">
     <meta name="theme-color" content="#fef3c7">
 
-    <!-- UnoCSS Runtime - 使用 jsDelivr CDN (对中国用户友好) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@unocss/reset@0.66.5/tailwind.css">
-    <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime@0.66.5/uno.global.js"></script>
+    <!-- Tailwind CSS Play CDN (稳定且不会被拦截) -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* 使用中文网字体 CDN - 思源宋体 */
-        @font-face {
-            font-family: 'Source Han Serif SC';
-            font-style: normal;
-            font-weight: 400;
-            font-display: swap;
-            src: url('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.8/files/noto-serif-sc-chinese-simplified-400-normal.woff2') format('woff2');
-            unicode-range: U+4E00-9FFF, U+3400-4DBF, U+20000-2A6DF, U+2A700-2B73F, U+2B740-2B81F, U+2B820-2CEAF, U+F900-FAFF, U+2F800-2FA1F;
-        }
-
-        @font-face {
-            font-family: 'Source Han Serif SC';
-            font-style: normal;
-            font-weight: 500;
-            font-display: swap;
-            src: url('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.8/files/noto-serif-sc-chinese-simplified-500-normal.woff2') format('woff2');
-            unicode-range: U+4E00-9FFF, U+3400-4DBF, U+20000-2A6DF, U+2A700-2B73F, U+2B740-2B81F, U+2B820-2CEAF, U+F900-FAFF, U+2F800-2FA1F;
-        }
-
-        @font-face {
-            font-family: 'Source Han Serif SC';
-            font-style: normal;
-            font-weight: 700;
-            font-display: swap;
-            src: url('https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.8/files/noto-serif-sc-chinese-simplified-700-normal.woff2') format('woff2');
-            unicode-range: U+4E00-9FFF, U+3400-4DBF, U+20000-2A6DF, U+2A700-2B73F, U+2B740-2B81F, U+2B820-2CEAF, U+F900-FAFF, U+2F800-2FA1F;
-        }
-
+        /* 系统默认字体优先级 */
         body {
-            font-family: "Source Han Serif SC", "Noto Serif SC", "Songti SC", "STSong", "SimSun", serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -409,7 +381,7 @@
 
             try {
                 const jsonUrl = `https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/${date}.json`;
-                const imageUrl = `https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/${date}.png`;
+                const imageUrl = `https://60s-static.viki.moe/images/${date}.png`;
 
                 const response = await fetch(jsonUrl);
                 if (!response.ok) throw new Error('数据加载失败');
