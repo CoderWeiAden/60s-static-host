@@ -31,6 +31,21 @@ export async function update60s(): Promise<void> {
     process.exit(0)
   }
 
+  if (storage.hasData(date)) {
+    const data = await storage.loadData(date)
+
+    if (!data) {
+      console.warn(`No data found for date: ${date}`)
+      process.exit(1)
+    }
+
+    log(`Data of [${date}] found, generating image...`)
+
+    await saveImage(date, data)
+
+    process.exit(0)
+  }
+
   const [year, month, day] = date.split('-').map(Number)
   const queryDate = `${month}月${day}日`
   const queryWord = '读懂世界'
@@ -109,15 +124,17 @@ export async function update60s(): Promise<void> {
     debug('data', data)
 
     await storage.saveData(date, data)
-
-    await renderer.prepare()
-    const buffer = await renderer.render(<NewsCard data={data} />)
-    await renderer.destroy()
-
-    await storage.saveImage(date, buffer)
+    await saveImage(date, data)
 
     log('Update 60s completed')
 
     break
   }
+}
+
+async function saveImage(date: string, data: SavedData): Promise<void> {
+  await renderer.prepare()
+  const buffer = await renderer.render(<NewsCard data={data} />)
+  await renderer.destroy()
+  await storage.saveImage(data.date, buffer)
 }

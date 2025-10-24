@@ -6,6 +6,10 @@ out
 dist
 *.tgz
 
+# GitHub Actions
+.chromium
+.fonts
+
 # code coverage
 coverage
 *.lcov
