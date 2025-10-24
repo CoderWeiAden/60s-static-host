@@ -79,7 +79,7 @@ async function generateImages(): Promise<void> {
   // 销毁渲染器
   await renderer.destroy()
 
-  log('\n=== Generation Summary ===')
+  log('=== Generation Summary ===')
   log(`Total: ${missingDates.length}`)
   log(`Success: ${successCount}`)
   log(`Failed: ${failedCount}`)
