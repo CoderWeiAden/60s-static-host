@@ -177,46 +177,100 @@
                     </h2>
                 </div>
 
-                <div class="space-y-4">
-                    <div class="bg-amber-50/50 rounded-lg p-4 border border-amber-200/60">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <code class="text-xs md:text-sm text-amber-800 break-all font-mono">
-                                https://60s-static.viki.moe/60s/[date].json
-                            </code>
-                            <button
-                                onclick="copyEndpoint('https://60s-static.viki.moe/60s/', '.json')"
-                                class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-700 active:scale-95 transition-all whitespace-nowrap"
-                            >
-                                复制
-                            </button>
+                <div class="space-y-6">
+                    <!-- JSON 数据端点 -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-stone-700 mb-3">JSON 数据:</h3>
+                        <div class="space-y-3">
+                            <div class="bg-amber-50/50 rounded-lg p-4 border border-amber-200/60">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <code class="text-xs md:text-sm text-amber-800 break-all font-mono">
+                                        https://60s-static.viki.moe/60s/[date].json
+                                    </code>
+                                    <button
+                                        onclick="copyEndpoint('https://60s-static.viki.moe/60s/', '.json')"
+                                        class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-700 active:scale-95 transition-all whitespace-nowrap"
+                                    >
+                                        复制
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-50/50 rounded-lg p-4 border border-amber-200/60">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <code class="text-xs md:text-sm text-amber-800 break-all font-mono">
+                                        https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/[date].json
+                                    </code>
+                                    <button
+                                        onclick="copyEndpoint('https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/', '.json')"
+                                        class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-700 active:scale-95 transition-all whitespace-nowrap"
+                                    >
+                                        复制
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-50/50 rounded-lg p-4 border border-amber-200/60">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <code class="text-xs md:text-sm text-amber-800 break-all font-mono">
+                                        https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/60s/[date].json
+                                    </code>
+                                    <button
+                                        onclick="copyEndpoint('https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/60s/', '.json')"
+                                        class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-700 active:scale-95 transition-all whitespace-nowrap"
+                                    >
+                                        复制
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-amber-50/50 rounded-lg p-4 border border-amber-200/60">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <code class="text-xs md:text-sm text-amber-800 break-all font-mono">
-                                https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/[date].json
-                            </code>
-                            <button
-                                onclick="copyEndpoint('https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/', '.json')"
-                                class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-700 active:scale-95 transition-all whitespace-nowrap"
-                            >
-                                复制
-                            </button>
-                        </div>
-                    </div>
+                    <!-- PNG 图片端点 -->
+                    <div>
+                        <h3 class="text-sm font-semibold text-stone-700 mb-3">PNG 图片:</h3>
+                        <div class="space-y-3">
+                            <div class="bg-amber-50/50 rounded-lg p-4 border border-amber-200/60">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <code class="text-xs md:text-sm text-amber-800 break-all font-mono">
+                                        https://60s-static.viki.moe/images/[date].png
+                                    </code>
+                                    <button
+                                        onclick="copyEndpoint('https://60s-static.viki.moe/images/', '.png')"
+                                        class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-700 active:scale-95 transition-all whitespace-nowrap"
+                                    >
+                                        复制
+                                    </button>
+                                </div>
+                            </div>
 
-                    <div class="bg-amber-50/50 rounded-lg p-4 border border-amber-200/60">
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                            <code class="text-xs md:text-sm text-amber-800 break-all font-mono">
-                                https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/[date].png
-                            </code>
-                            <button
-                                onclick="copyEndpoint('https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/', '.png')"
-                                class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-700 active:scale-95 transition-all whitespace-nowrap"
-                            >
-                                复制
-                            </button>
+                            <div class="bg-amber-50/50 rounded-lg p-4 border border-amber-200/60">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <code class="text-xs md:text-sm text-amber-800 break-all font-mono">
+                                        https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/images/[date].png
+                                    </code>
+                                    <button
+                                        onclick="copyEndpoint('https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/images/', '.png')"
+                                        class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-700 active:scale-95 transition-all whitespace-nowrap"
+                                    >
+                                        复制
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-50/50 rounded-lg p-4 border border-amber-200/60">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <code class="text-xs md:text-sm text-amber-800 break-all font-mono">
+                                        https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/[date].png
+                                    </code>
+                                    <button
+                                        onclick="copyEndpoint('https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/', '.png')"
+                                        class="px-4 py-2 bg-amber-600 text-white rounded text-sm hover:bg-amber-700 active:scale-95 transition-all whitespace-nowrap"
+                                    >
+                                        复制
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -392,20 +446,21 @@
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                         <!-- 图片预览 -->
                         <div class="order-1 lg:order-1">
-                            <div class="bg-stone-50/50 rounded-lg p-4 border border-stone-200">
+                            <div id="imageWrapper" class="bg-stone-50/50 rounded-lg p-4 border border-stone-200">
                                 <img
                                     src="${imageUrl}"
                                     alt="每日新闻图片"
                                     class="w-full h-auto rounded shadow-lg"
                                     onerror="this.parentElement.innerHTML='<div class=\\'text-center py-8 text-stone-400\\'>图片加载失败</div>'"
+                                    onload="document.getElementById('jsonContainer').style.height = document.getElementById('imageWrapper').offsetHeight + 'px'"
                                 >
                             </div>
                         </div>
 
                         <!-- JSON 数据 -->
                         <div class="order-2 lg:order-2">
-                            <div class="bg-stone-50/50 rounded-lg p-4 border border-stone-200 max-h-[600px] overflow-auto">
-                                <pre class="text-xs text-stone-700 font-mono leading-relaxed">${JSON.stringify(data, null, 2)}</pre>
+                            <div id="jsonContainer" class="bg-stone-50/50 rounded-lg p-4 border border-stone-200 overflow-auto">
+                                <pre class="text-xs text-stone-700 font-mono leading-relaxed whitespace-pre-wrap break-all">${JSON.stringify(data, null, 2)}</pre>
                             </div>
                         </div>
                     </div>
@@ -421,14 +476,27 @@
         }
 
         function copyEndpoint(prefix, suffix) {
-            const date = document.getElementById('dateInput').value || '2025-10-24';
+            const dateInput = document.getElementById('dateInput');
+            const date = dateInput.value;
+
+            if (!date) {
+                alert('请先选择日期');
+                dateInput.focus();
+                return;
+            }
+
             const url = prefix + date + suffix;
 
             navigator.clipboard.writeText(url).then(() => {
                 // 创建提示元素
                 const toast = document.createElement('div');
                 toast.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 fade-in';
-                toast.textContent = '已复制到剪贴板！';
+                toast.innerHTML = `
+                    <div class="text-center">
+                        <div class="font-semibold mb-1">✓ 已复制到剪贴板</div>
+                        <div class="text-xs opacity-90 break-all max-w-md">${url}</div>
+                    </div>
+                `;
                 document.body.appendChild(toast);
 
                 // 3秒后移除
@@ -436,7 +504,7 @@
                     toast.style.opacity = '0';
                     toast.style.transition = 'opacity 0.3s';
                     setTimeout(() => toast.remove(), 300);
-                }, 2000);
+                }, 3000);
             }).catch(() => {
                 alert('复制失败，请手动复制：\n' + url);
             });
