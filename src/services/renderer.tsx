@@ -26,6 +26,8 @@ class RenderService {
         '--no-sandbox',
         '--hide-scrollbars',
         '--font-render-hinting=medium',
+        // 明确指定使用简体中文字体
+        '--lang=zh-CN',
       ],
     })
   }
@@ -88,14 +90,21 @@ class RenderService {
 
   async wrapHtmlAndUnocss(html: string): Promise<string> {
     return `
+    <html lang="zh-CN">
     <head>
       <meta charset="UTF-8" />
       <link rel="stylesheet" href="https://unpkg.com/@unocss/reset@66.5.4/tailwind.css"></link>
       <script src="https://unpkg.com/@unocss/runtime@66.5.4/uno.global.js"></script>
+      <style>
+        body {
+          font-family: "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+        }
+      </style>
     </head>
     <body style="height: 100vh; width: 100vw;">
       <div id="main" style="display: inline-flex;">${html}</div>
-    </body>`
+    </body>
+    </html>`
   }
 }
 

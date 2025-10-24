@@ -45,7 +45,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: .fonts
-          key: fonts-noto-v1
+          key: fonts-noto-sc-v2
 
       # 如果 Chromium 缓存不存在，则下载
       - name: Download Chromium if not cached
@@ -62,7 +62,8 @@ jobs:
         run: |
           mkdir -p .fonts
           sudo apt-get update
-          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji fonts-freefont-ttf
+          # 安装简体中文字体而不是 CJK 混合字体
+          sudo apt-get install -y fonts-noto-cjk-sc fonts-noto-color-emoji fonts-freefont-ttf
           # 拷贝字体到缓存目录
           cp -r /usr/share/fonts/* .fonts/
 
