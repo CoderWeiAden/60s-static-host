@@ -10,7 +10,7 @@
 
 ### API 端点
 
-将 `[date]` 替换为 `YYYY-MM-DD` 格式的日期，例如 `2025-01-15`
+将 `[date]` 替换为 `YYYY-MM-DD` 格式的日期，例如 `2025-10-24`
 
 **JSON 数据:**
 ```
@@ -21,24 +21,26 @@ https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/60s/[date].jso
 
 **PNG 图片:**
 ```
+https://60s-static.viki.moe/images/[date].png
+https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/images/[date].png
 https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/[date].png
 ```
 
 ### 示例请求
 
 ```bash
-# 获取 2025-01-15 的新闻数据
-curl https://60s-static.viki.moe/60s/2025-01-15.json
+# 获取 2025-10-24 的新闻数据
+curl https://60s-static.viki.moe/60s/2025-10-24.json
 
 # 获取对应的图片
-curl https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/2025-01-15.png
+curl https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/2025-10-24.png
 ```
 
 ## 数据格式
 
 ```json
 {
-  "date": "2025-01-15",
+  "date": "2025-10-24",
   "news": [
     "新闻条目 1",
     "新闻条目 2",
@@ -48,9 +50,9 @@ curl https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/20
   "image": "https://...",
   "tip": "每日金句",
   "link": "https://...",
-  "created": "2025/01/15 06:30:00",
+  "created": "2025/10/24 06:30:00",
   "created_at": 1736900400000,
-  "updated": "2025/01/15 06:30:00",
+  "updated": "2025/10/24 06:30:00",
   "updated_at": 1736900400000
 }
 ```
