@@ -5,12 +5,12 @@ on:
     # - cron: '*/10 0-10 * * *'
 
     # 根据目标北京时间倒推 8 小时设置 UTC 时间
-    - cron: '*/10 16-23,0-2 * * *'
+    - cron: "*/10 16-23,0-2 * * *"
 
   workflow_dispatch:
     inputs:
       date:
-        description: 'Optional data execution date in YYYY-MM-DD format.'
+        description: "Optional data execution date in YYYY-MM-DD format."
         required: false
 
 jobs:
@@ -24,24 +24,19 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version-file: '.node-version'
-          registry-url: 'https://registry.npmjs.org'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v3
+          bun-version-file: ".bun-version"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
-      # - name: Install Chinese fonts
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y fonts-noto-cjk
+      - name: Install Chinese fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y fonts-noto-cjk
 
-      - name: Fetch data & Update
+      - name: Fetch data & Update & Render
         env:
           WECHAT_TOKEN: ${{ secrets.WECHAT_TOKEN }}
           WECHAT_COOKIE: ${{ secrets.WECHAT_COOKIE }}
@@ -57,9 +52,9 @@ jobs:
 
           # run update script with an optional date, if provided
           if [ -z "${{ github.event.inputs.date }}" ]; then
-            pnpm run update
+            bun run update
           else
-            pnpm run update --date=${{ github.event.inputs.date }}
+            bun run update --date=${{ github.event.inputs.date }}
           fi
 
           # Add all changes to staging
@@ -76,5 +71,5 @@ jobs:
             git commit -m "chore: [bot] update $COMMIT_DATE data"
             git push
           else
-            echo "No changes to commit"
+            echo "No changes to commit, skipping push."
           fi

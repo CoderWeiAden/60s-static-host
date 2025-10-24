@@ -1,71 +1,121 @@
+import { DEFAULT_WECHAT_FAKE_ID, WECHAT_TOKEN, WECHAT_COOKIE, USER_AGENT } from '../constants'
 import { debug } from '../utils'
-import { USER_AGENT } from '../config'
 
-import type { FetchOptions, FetchResponse } from '../types'
+class WeChat {
+  constructor(private readonly token = WECHAT_TOKEN, private readonly cookie = WECHAT_COOKIE) {}
 
-export async function fetchArticles(options: FetchOptions): Promise<FetchResponse> {
-  const { fakeid, token, cookie, query = '' } = options
-
-  debug('options', options)
-
-  const url = new URL('https://mp.weixin.qq.com/cgi-bin/appmsg')
-
-  Object.entries({
-    action: 'list_ex',
-    fakeid,
-    query,
-    begin: options?.begin ?? 0,
-    count: options?.count ?? 4,
-    type: 9,
-    need_author_name: 1,
-    token,
-    lang: 'zh_CN',
-    f: 'json',
-    ajax: 1,
-  }).forEach(([key, value]) => {
-    url.searchParams.append(key, value.toString())
-  })
-
-  debug('url', url.toString())
-
-  return fetch(url, {
-    headers: {
-      Cookie: cookie,
+  get headers() {
+    return {
+      Cookie: this.cookie,
       'X-Requested-With': 'XMLHttpRequest',
-      Referer: `https://mp.weixin.qq.com/cgi-bin/appmsg?t=media%2Fappmsg_edit_v2&action=edit&isNew=1&type=10&token=${token}&lang=zh_CN&timestamp=${Date.now()}`,
+      Referer: this.createReferer(),
       'User-Agent': USER_AGENT,
-    },
-  })
-    .then(e => {
-      if (e.status !== 200) {
-        e.text().then(text => {
-          throw new Error(`fetch failed, status: ${e.status}, result: ${text}`)
-        })
-      } else {
-        return e.json()
-      }
-    })
-    .then(e => {
-      debug('data', e)
-      debug('app_msg_cnt', e?.app_msg_cnt)
-      debug('app_msg_list', e?.app_msg_list)
-      debug('title list', e?.app_msg_list?.map((e: any) => e.title)?.join(', '))
+    }
+  }
 
-      return {
-        isOK: e?.base_resp?.ret === 0,
-        list: e?.app_msg_list || [],
-        count: e?.app_msg_cnt || 0,
-        error: e?.base_resp?.ret === 0 ? null : e?.base_resp?.err_msg,
-      }
+  createReferer() {
+    const sp = new URLSearchParams({
+      t: 'media/appmsg_edit_v2',
+      action: 'edit',
+      isNew: '1',
+      type: '10',
+      token: this.token,
+      lang: 'zh_CN',
+      timestamp: Date.now().toString(),
     })
-    .catch(err => {
-      console.error(err)
 
-      return {
-        isOK: false,
-        list: [],
-        count: 0,
-        error: err,
-      }
+    return `https://mp.weixin.qq.com/cgi-bin/appmsg?${sp.toString()}`
+  }
+
+  async fetchPosts(options: {
+    fakeId?: string
+    begin?: number
+    count?: number
+    query?: string
+  }): Promise<{ isOK: boolean; posts: PostItem[]; count: number; error: string | null }> {
+    const { fakeId = DEFAULT_WECHAT_FAKE_ID, query = '', begin = 0, count = 4 } = options
+
+    debug('options', options)
+
+    const sp = new URLSearchParams({
+      action: 'list_ex',
+      fakeid: fakeId,
+      query,
+      begin: begin.toString(),
+      count: count.toString(),
+      type: '9',
+      need_author_name: '1',
+      token: this.token,
+      lang: 'zh_CN',
+      f: 'json',
+      ajax: '1',
     })
+
+    const url = `https://mp.weixin.qq.com/cgi-bin/appmsg?${sp.toString()}`
+
+    debug('url', url.toString())
+
+    const response = await fetch(url, { headers: this.headers })
+
+    if (response.status !== 200) {
+      throw new Error(`fetch failed, status: ${response.status}, result: ${response.text()}`)
+    }
+
+    const data = (await response.json()) as {
+      app_msg_cnt: number
+      app_msg_list: PostItem[]
+      base_resp: { ret: number; err_msg: string }
+    }
+
+    const isOK = data?.base_resp?.ret === 0
+
+    debug('app_msg_cnt', data?.app_msg_cnt)
+    debug('app_msg_list', data?.app_msg_list)
+    debug('app_msg_list title list', data?.app_msg_list?.map(e => e.title)?.join(', '))
+
+    return {
+      isOK: isOK,
+      posts: data?.app_msg_list || [],
+      count: data?.app_msg_cnt || 0,
+      error: isOK ? null : data?.base_resp?.err_msg ?? JSON.stringify(data?.base_resp || {}),
+    }
+  }
+}
+
+export const wechat = new WeChat()
+
+interface PostItem {
+  aid: string
+  album_id: string
+  appmsg_album_infos: any[]
+  appmsgid: number
+  audio_info?: {
+    audio_infos: {
+      audio_id: string
+      masssend_audio_id: string
+      play_length: number
+      title: string
+      trans_state: number
+      voice_verify_state: number
+    }[]
+  }
+  author_name: string
+  checking: number
+  copyright_type: number
+  cover: string
+  create_time: number
+  digest: string
+  has_red_packet_cover: number
+  is_pay_subscribe: number
+  item_show_type: number
+  itemidx: number
+  link: string
+  media_duration: string
+  mediaapi_publish_status: number
+  pay_album_info: {
+    appmsg_album_infos: any[]
+  }
+  tagid: any[]
+  title: string
+  update_time: number
 }

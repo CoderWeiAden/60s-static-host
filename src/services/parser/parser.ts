@@ -1,13 +1,11 @@
 import pangu from 'pangu'
 import { load } from 'cheerio'
-import { debug } from '../utils'
-import { REGEX_PATTERNS, USER_AGENT } from '../config'
+import { debug } from '../../utils'
+import { REGEX_PATTERNS, USER_AGENT } from '../../constants'
 
-import type { ParsedArticle } from '../types'
+import type { ParsedArticle } from '../storage'
 
-const EMPTY_RESULT = { news: [], cover: '', image: '', tip: '', audio: { music: '', news: '' } }
-
-export async function parseArticleUrl(url: string): Promise<ParsedArticle> {
+export async function parsePost(url: string): Promise<ParsedArticle> {
   debug('url', url)
 
   const html = await fetch(url, { headers: { 'User-Agent': USER_AGENT } })
@@ -134,98 +132,3 @@ const generationConfig = {
     required: ['news', 'cover', 'image', 'tip'],
   },
 }
-
-export async function parseArticleUrlViaLLM(url: string): Promise<ParsedArticle> {
-  debug('url', url)
-
-  const apiKey = process.env.GEMINI_API_KEY
-
-  if (!apiKey) {
-    console.error("No Gemini API key provided, can't use LLM to parse article.")
-    return EMPTY_RESULT
-  }
-
-  const html = await fetch(url, { headers: { 'User-Agent': USER_AGENT } })
-    .then(e => e.text())
-    .catch(() => fetch(url).then(e => e.text()))
-
-  const $ = load(html)
-
-  const model = 'gemini-2.5-flash'
-  const mainHtml = $('#page-content').html() || ''
-
-  if (!mainHtml) {
-    console.error('No main HTML content found in the article.')
-    return EMPTY_RESULT
-  }
-
-  debug('model', model)
-
-  debug('main html length', mainHtml.length)
-
-  const timeStart = performance.now()
-
-  const options = {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      system_instruction: { parts: [{ text: prompt }] },
-      contents: [{ role: 'user', parts: [{ text: mainHtml }] }],
-      generationConfig,
-    }),
-  }
-
-  const thirdApi = `https://google-ai.deno.dev/v1beta/models/${model}:generateContent?key=${apiKey}`
-  const officialApi = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
-
-  const response = await (
-    await fetch(thirdApi, options)
-  )
-    .json()
-    .catch(async error => {
-      console.warn('First Gemini API request failed, retrying official domain...', error)
-      return await (await fetch(officialApi, options)).json()
-    })
-    .catch(error => {
-      console.error('Both Gemini API requests failed:', error)
-      return null
-    })
-
-  if (!response) {
-    console.error('No response from Gemini API.')
-    return EMPTY_RESULT
-  }
-
-  debug('LLM request cost (ms)', Math.round((performance.now() - timeStart) * 1000) / 1000)
-
-  // console.log('Gemini response:', JSON.stringify(response, null, 2))
-  try {
-    const data = JSON.parse(response?.candidates?.[0]?.content?.parts?.[0]?.text || '{}')
-
-    debug('LLM data', data)
-
-    if (!('news' in data) || !('cover' in data) || !('image' in data) || !('tip' in data)) {
-      console.error('Invalid Gemini response format:', data)
-
-      return EMPTY_RESULT
-    }
-
-    return {
-      news: data.news || [],
-      cover: data.cover || '',
-      image: data.image || '',
-      tip: data.tip || '',
-      audio: { music: '', news: '' },
-    }
-  } catch {
-    console.error('Failed to parse Gemini response:', response?.candidates?.[0]?.content?.parts)
-
-    return EMPTY_RESULT
-  }
-}
-
-// parseArticleUrl(
-//   'http://mp.weixin.qq.com/s?__biz=Mzk3NTMzOTU1Mg==&mid=2247486384&idx=2&sn=b737ac572f301ce208a4f7ca051c22e9&chksm=c4cc62fff3bbebe90448d7f9d0da47a34c081abc9dd6b88f766e9925ded39ec2fe8958a5b401#rd'
-// )
-//   .then(console.log)
-//   .catch(console.error)

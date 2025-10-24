@@ -1,8 +1,6 @@
 import path from 'node:path'
-import { PATHS } from '../config'
+import { PATHS } from '../constants'
 import { ensureDir, fileExists, readJsonFile, writeJsonFile, getProjectRoot } from '../utils'
-
-import type { SavedData } from '../types'
 
 export class StorageService {
   private readonly projectRoot: string
@@ -47,4 +45,26 @@ export class StorageService {
     }
     return readJsonFile<SavedData>(filePath)
   }
+}
+
+export const storage = new StorageService()
+
+export interface ParsedArticle {
+  news: string[]
+  image: string
+  tip: string
+  cover: string
+  audio: {
+    music: string
+    news: string
+  }
+}
+
+export interface SavedData extends ParsedArticle {
+  date: string
+  link: string
+  created: string
+  created_at: number
+  updated: string
+  updated_at: number
 }
