@@ -136,29 +136,47 @@
         <div class="grid grid-cols-1 gap-6 md:gap-8 mb-8">
             <!-- 今日新闻预览（最重要，放在最前） -->
             <section class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-stone-200/60 p-6 md:p-8 decorative-border fade-in" style="animation-delay: 0.1s">
-                <div class="flex items-center gap-3 mb-6 pb-4 border-b border-stone-200/60">
-                    <div class="seal text-amber-700 text-xs bg-amber-50">
-                        今
-                        日
+                <!-- 标题栏 + 日期选择器 -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-4 border-b border-stone-200/60">
+                    <div class="flex items-center gap-3">
+                        <div class="seal text-amber-700 text-xs bg-amber-50">
+                            今
+                            日
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-semibold text-stone-800 brush-text">
+                            新闻预览
+                        </h2>
                     </div>
-                    <h2 class="text-2xl md:text-3xl font-semibold text-stone-800 brush-text">
-                        新闻预览
-                    </h2>
-                </div>
 
-                <!-- 日期选择器 -->
-                <div class="flex flex-col sm:flex-row gap-3 mb-6">
-                    <input
-                        type="date"
-                        id="dateInput"
-                        class="flex-1 px-4 py-3 bg-amber-50/50 border border-stone-300 rounded-lg text-stone-700 font-medium focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
-                    >
-                    <button
-                        onclick="loadData()"
-                        class="px-6 py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-medium hover:from-amber-700 hover:to-amber-800 active:scale-95 transition-all shadow-md"
-                    >
-                        查看此日
-                    </button>
+                    <!-- 日期选择器 -->
+                    <div class="flex flex-wrap gap-2">
+                        <input
+                            type="date"
+                            id="dateInput"
+                            class="px-3 py-2 bg-amber-50/50 border border-stone-300 rounded-lg text-stone-700 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
+                        >
+                        <button
+                            onclick="adjustDate(-1)"
+                            class="px-3 py-2 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-sm font-medium transition-all"
+                            title="前一天"
+                        >
+                            ←
+                        </button>
+                        <button
+                            onclick="adjustDate(1)"
+                            class="px-3 py-2 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-sm font-medium transition-all"
+                            title="后一天"
+                        >
+                            →
+                        </button>
+                        <button
+                            onclick="setToday()"
+                            class="px-3 py-2 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-sm font-medium transition-all whitespace-nowrap"
+                            title="跳转到今天"
+                        >
+                            今天
+                        </button>
+                    </div>
                 </div>
 
                 <!-- 预览容器 -->
@@ -423,6 +441,22 @@
                 `${year}年${month}月${day}日 星期${weekDay}`;
         }
 
+        // 设置为今天
+        function setToday() {
+            const today = new Date();
+            document.getElementById('dateInput').value = formatDate(today);
+            loadData();
+        }
+
+        // 调整日期 (days: 正数向后, 负数向前)
+        function adjustDate(days) {
+            const dateInput = document.getElementById('dateInput');
+            const currentDate = new Date(dateInput.value || new Date());
+            currentDate.setDate(currentDate.getDate() + days);
+            dateInput.value = formatDate(currentDate);
+            loadData();
+        }
+
         async function loadData() {
             const date = document.getElementById('dateInput').value;
             if (!date) {
@@ -434,7 +468,7 @@
             container.innerHTML = '<div class="text-center py-12 text-stone-500">加载中...</div>';
 
             try {
-                const jsonUrl = `https://cdn.jsdelivr.net/gh/vikiboss/60s-static-host@main/static/60s/${date}.json`;
+                const jsonUrl = `https://60s-static.viki.moe/60s/${date}.json`;
                 const imageUrl = `https://60s-static.viki.moe/images/${date}.png`;
 
                 const response = await fetch(jsonUrl);
