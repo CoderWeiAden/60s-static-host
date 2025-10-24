@@ -6,6 +6,14 @@ export function debug(name: string, ...values: unknown[]): void {
   )
 }
 
+export function log(...values: unknown[]): void {
+  console.log(
+    `[${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}] [LOG]`,
+    ...values,
+    `\n`
+  )
+}
+
 export function getInputArgValue(argName: string): string | undefined {
   return process.argv
     .find(arg => arg.startsWith(`--${argName}`))

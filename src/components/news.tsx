@@ -1,12 +1,18 @@
-import { use } from 'react'
+import { SolarDay } from 'tyme4ts'
+import { localeTime } from '../utils'
 
 interface NewsData {
   date: string
   news: string[]
   tip: string
-  api_updated: string
-  day_of_week: string
-  lunar_date: string
+  created_at: number
+}
+
+const WEEK_DAYS = ['日', '一', '二', '三', '四', '五', '六']
+
+function getDayOfWeek(date?: string) {
+  const day = date ? new Date(date) : new Date()
+  return `星期${WEEK_DAYS[day.getDay()]}`
 }
 
 const formatDate = (dateStr: string) => {
@@ -14,33 +20,26 @@ const formatDate = (dateStr: string) => {
   return { month: date.getMonth() + 1, day: date.getDate(), year: date.getFullYear() }
 }
 
-const fetchData = async () => await (await fetch('https://60s.viki.moe/v2/60s')).json()
-
-export function NewsCard() {
-  const { data } = use(fetchData()) as { data: NewsData }
-
+export function NewsCard({ data }: { data: NewsData }) {
   const { month, day, year } = formatDate(data.date)
+  const lunarDate = SolarDay.fromYmd(year, month, day).getLunarDay().toString().replace('农历', '')
 
   return (
-    <div className='max-w-3xl mx-auto bg-gradient-to-br from-stone-50/95 via-amber-50/90 to-stone-100/95 relative shadow-2xl rounded-3xl border border-stone-300/50 overflow-hidden'>
-      {/* 背景装饰纹理 */}
+    <div className='max-w-3xl mx-auto bg-gradient-to-br from-stone-50/95 via-amber-50/90 to-stone-100/95 relative overflow-hidden'>
       <div className='absolute inset-0 opacity-[0.02]'>
         <div className='absolute top-12 left-8 w-2 h-2 bg-amber-400 rounded-full'></div>
         <div className='absolute top-20 right-12 w-1 h-1 bg-stone-400 rounded-full'></div>
         <div className='absolute bottom-20 left-12 w-1.5 h-1.5 bg-amber-300 rounded-full'></div>
       </div>
 
-      {/* 顶部装饰元素 */}
       <div className='absolute top-0 left-1/2 transform -translate-x-1/2 flex items-center space-x-2'>
         <div className='w-16 h-0.5 bg-gradient-to-r from-transparent via-amber-400/60 to-transparent rounded-full'></div>
         <div className='w-1.5 h-1.5 bg-amber-400/50 rounded-full'></div>
         <div className='w-16 h-0.5 bg-gradient-to-l from-transparent via-amber-400/60 to-transparent rounded-full'></div>
       </div>
 
-      {/* 标题区域 */}
       <div className='bg-gradient-to-r from-stone-50/80 via-amber-50/60 to-stone-50/80 px-8 py-8 border-b border-stone-200/60'>
         <div className='text-center space-y-3 relative'>
-          {/* 标题装饰花纹 */}
           <div className='absolute -top-2 left-1/2 transform -translate-x-1/2 flex space-x-1'>
             <div className='w-0.5 h-0.5 bg-amber-400/40 rounded-full'></div>
             <div className='w-1 h-0.5 bg-amber-300/40 rounded-full'></div>
@@ -55,16 +54,14 @@ export function NewsCard() {
               {year}年{month}月{day}日
             </span>
             <span className='mx-4 text-amber-400/60'>❋</span>
-            <span>{data.day_of_week}</span>
+            <span>{getDayOfWeek(data.date)}</span>
             <span className='mx-4 text-amber-400/60'>❋</span>
-            <span className='tracking-wider'>农历{data.lunar_date}</span>
+            <span className='tracking-wider'>农历{lunarDate}</span>
           </div>
         </div>
       </div>
 
-      {/* 新闻内容区域 */}
       <div className='px-8 py-5 bg-gradient-to-b from-white/80 to-stone-50/60 relative'>
-        {/* 内容区装饰 */}
         <div className='absolute top-4 right-6 w-8 h-px bg-gradient-to-r from-amber-200/30 to-transparent'></div>
 
         <div className='space-y-0'>
@@ -92,9 +89,7 @@ export function NewsCard() {
         </div>
       </div>
 
-      {/* 每日一言区域 - 简约便笺风格 */}
       <div className='relative bg-amber-50/50 border-t border-stone-300/50 px-8 py-6'>
-        {/* 便笺效果 */}
         <div className='absolute top-0 right-6 w-3 h-3 bg-amber-200/40 transform rotate-45 translate-y-1'></div>
         <div className='absolute top-2 right-8 w-1 h-1 bg-amber-300/60 rounded-full'></div>
 
@@ -103,25 +98,23 @@ export function NewsCard() {
             <p className='text-stone-700 leading-relaxed text-center px-6 italic relative z-10'>
               「 {data.tip} 」
             </p>
-            {/* 便笺纸质感 */}
+
             <div className='absolute inset-0 bg-amber-50/30 rounded-lg transform rotate-0.5 scale-105 -z-0'></div>
           </div>
         </div>
       </div>
 
-      {/* 底部信息区域 */}
       <div className='bg-gradient-to-r from-stone-100/70 via-amber-50/40 to-stone-100/70 border-t border-stone-200/50 px-8 py-5 rounded-b-3xl'>
         <div className='flex items-center justify-between text-xs relative'>
-          {/* 底部装饰线 */}
           <div className='absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-px bg-gradient-to-r from-transparent via-amber-300/30 to-transparent'></div>
 
           <div className='text-stone-500 space-y-1.5 font-light'>
-            <div className='tracking-wide'>更新时间：{data.api_updated}</div>
+            <div className='tracking-wide'>更新时间：{localeTime(data.created_at)}</div>
             <div className='text-stone-400 tracking-wider'>共 {data.news.length} 条精选新闻</div>
           </div>
 
           <div className='text-right text-stone-400 space-y-1.5 font-light'>
-            <div className='tracking-wide'>基于 KiviBot 3.0</div>
+            <div className='tracking-wide'>@GitHub vikiboss/60s</div>
             <div className='text-[10px] tracking-widest opacity-75'>
               React 界面 + TailwindCSS 样式 + Puppeteer 渲染
             </div>

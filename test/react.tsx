@@ -27,7 +27,7 @@ const fetchData = async () => await (await fetch('https://60s.viki.moe/v2/60s'))
 async function renderReactComponent() {
   await renderer.prepare()
 
-  const buffer = await renderer.render(<NewsCard />)
+  const buffer = await renderer.render(<NewsCard data={data} />)
 
   fs.writeFileSync('test/screenshot.png', buffer)
 

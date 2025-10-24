@@ -13,7 +13,6 @@ const prompt = `
 
 - news: 新闻列表，string[] 类型，大概 15 条，以具实际况决定，是 html 里正文的主要内容。
 - cover: 新闻封面图片 URL，string 类型，在 “今日简报” 标题下面方、农历等信息的上面的长方形封面图片，如果不存在则返回空字符串。
-- image: 图片版本新闻的 URL，string 类型，在 “简报图片版” 类似标题下方的图片，如果不存在则返回空字符串。
 - tip: 每日一句，string 类型，可能是【微语】、【每日一句】、【每日金句】 等 prefix 文本的后面，通常是文章的最后一段。
 
 ## 针对每一项新闻文本的要求
@@ -40,7 +39,6 @@ const prompt = `
       "当地 23 日，以方确认哈马斯政治局高层夫妇被以军炸死！以色列连续三周禁止援助物资进入加沙，联合国官员发文警告：援助物资的分发大幅减少，面粉仅够 6 天分发",
       // ... 更多新闻
   ],
-  "image": "https://mmbiz.qpic.cn/sz_mmbiz_png/O3P1rGdfJibIX7H04XgRWzlvibEHuj3rBS3OOjTjygibMpuekbndnWCWiccJ4vsrjak8wJv3VpVicwiaUXFInnyB0s9w/640?wx_fmt=png&from=appmsg&tp=webp&wxfrom=5&wx_lazy=1",
   "cover": "https://mmbiz.qpic.cn/sz_mmbiz_png/O3P1rGdfJibIX7H04XgRWzlvibEHuj3rBSEoIElyBGOumg51zy9okALUEia96Ezqc66jccSzgNnUPBNHvnXKSowqg/640?wx_fmt=png&from=appmsg&tp=webp&wxfrom=5&wx_lazy=1",
   "tip": "人生中有些事，不竭尽全力，你永远无法知晓自己的出色"
 }
@@ -129,7 +127,7 @@ export async function parsePostViaLLM(url: string): Promise<ParsedArticle> {
     (Math.round((performance.now() - timeStart) * 1000) / 1000).toLocaleString('zh-CN')
   )
 
-  // console.log('Gemini response:', JSON.stringify(response, null, 2))
+  // log('Gemini response:', JSON.stringify(response, null, 2))
 
   try {
     debug('LLM response', response)
@@ -147,7 +145,6 @@ export async function parsePostViaLLM(url: string): Promise<ParsedArticle> {
     return {
       news: data.news || [],
       cover: data.cover || '',
-      image: data.image || '',
       tip: data.tip || '',
       audio: { music: '', news: '' },
     }

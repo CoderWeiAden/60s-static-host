@@ -1,11 +1,11 @@
 import { wechat } from './services/wechat'
+import { renderer } from './services/renderer'
+import { NewsCard } from './components/news'
 import { WECHAT_ACCOUNTS } from './constants'
 import { storage, type SavedData } from './services/storage'
 import { parsePostViaLLM as parsePostViaLLM } from './services/parser'
 import { parsePostViaLLM as parsePostViaParser } from './services/parser'
-import { debug, getInputArgValue, isValidDateFormat, localeDate, localeTime } from './utils'
-import { renderer } from './services/renderer'
-import { NewsCard } from './components/news'
+import { debug, getInputArgValue, isValidDateFormat, localeDate, localeTime, log } from './utils'
 
 update60s().catch(error => {
   console.error('Error updating 60s:', error)
@@ -27,7 +27,7 @@ export async function update60s(): Promise<void> {
   debug('date', date)
 
   if (storage.hasData(date) && storage.hasImage(date)) {
-    console.log(`Data & Image of [${date}] already exists, skipped`)
+    log(`Data & Image of [${date}] already exists, skipped`)
     process.exit(0)
   }
 
@@ -70,7 +70,6 @@ export async function update60s(): Promise<void> {
     }
 
     debug('targetArticle', targetArticle)
-    debug('targetArticle.link', targetArticle.link)
 
     const parsed = await parsePostViaLLM(targetArticle.link).catch(async error => {
       console.warn(`LLM parser failed, fallback to standard parser...`, error)
@@ -98,6 +97,7 @@ export async function update60s(): Promise<void> {
     const data: SavedData = {
       date: date,
       ...parsed,
+      image: `https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/${date}.png`,
       cover: parsed.cover || targetArticle.cover,
       link: targetArticle.link.split('&chksm=')[0] || '',
       created: localeTime(targetArticle.create_time * 1000),
@@ -108,12 +108,16 @@ export async function update60s(): Promise<void> {
 
     debug('data', data)
 
-    storage.saveData(date, data)
+    await storage.saveData(date, data)
 
     await renderer.prepare()
-    const buffer = await renderer.render(<NewsCard />)
+    const buffer = await renderer.render(<NewsCard data={data} />)
     await renderer.destroy()
 
-    storage.saveImage(date, buffer)
+    await storage.saveImage(date, buffer)
+
+    log('Update 60s completed')
+
+    break
   }
 }
