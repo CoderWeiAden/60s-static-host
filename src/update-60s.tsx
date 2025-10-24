@@ -48,14 +48,17 @@ export async function update60s(): Promise<void> {
 
   const [year, month, day] = date.split('-').map(Number)
   const queryDate = `${month}月${day}日`
-  const queryWord = '读懂世界'
-  const query = `${queryDate} ${queryWord}`
 
   debug('year-month-day', { year, month, day })
-  debug('query', query)
 
   for (const account of WECHAT_ACCOUNTS) {
+    await new Promise(resolve => setTimeout(resolve, 5000 * Math.random()))
+
+    const queryWord = account.query || '读懂世界'
+    const query = `${queryDate} ${queryWord}`
+
     debug('fetch-account', account.name)
+    debug('account-query', query)
 
     const result = await wechat.fetchPosts({ fakeId: account.fakeId, query })
 
@@ -65,7 +68,7 @@ export async function update60s(): Promise<void> {
     }
 
     if (result.posts.length === 0) {
-      console.warn(`No posts found for account: ${account.name}`)
+      console.warn(`No posts found for account: ${account.name}, wechatId: ${account.wechatId}`)
       continue
     }
 

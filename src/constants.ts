@@ -1,7 +1,12 @@
+// prettier-ignore
 export const WECHAT_ACCOUNTS = [
-  { name: '每天100秒读懂世界', fakeId: 'Mzg3NTQ0MjQwNg==', wechatId: 'TT100s-News' },
-  { name: '每天60秒读懂世界', fakeId: 'MzkwNDc5NTA0Mw==', wechatId: 'mt36501' },
-  { name: '每天3分钟读懂世界', fakeId: 'MzkwNjY1ODIxNw==', wechatId: 'hao36501' },
+  { name: '每天60秒知天下', query: '知天下', fakeId: 'MzIxNzczMjE0OQ==', wechatId: 'zhitx365' }, // 更新时间最早
+  { name: '每天60秒读懂世界', query: '读懂世界', fakeId: 'MzkwNDc5NTA0Mw==', wechatId: 'mt36501' }, // 白咖啡主号
+  { name: '早间一分钟小读', query: '小读', fakeId: 'Mzk0MDY1MjUzMA==', wechatId: 'ZJYFZXD' }, // 更新时间较早
+  { name: '每天100秒读懂世界', query: '读懂世界', fakeId: 'Mzg3NTQ0MjQwNg==', wechatId: 'TT100s-News' }, // 有图片的号
+  { name: '小叮读报', query: '天下事', fakeId: 'MzkyNDE4NDQ0Nw==', wechatId: '未设置' }, // 最早的备用号
+  { name: '每天1分钟读世界', query: '读懂世界', fakeId: 'Mzk3NTMzOTU1Mg==', wechatId: 'new60s' }, // 蓝色备用号
+  { name: '每天3分钟读懂世界', query: '读懂世界', fakeId: 'MzkwNjY1ODIxNw==', wechatId: 'hao36501' }, // 紫色备用号
 ]
 
 export const IS_IN_CI = !!process.env.CI
