@@ -1,17 +1,13 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import { PATHS } from '../constants'
-import { ensureDir, fileExists, readJsonFile, writeJsonFile, getProjectRoot } from '../utils'
 
 export class StorageService {
-  private readonly projectRoot: string
-  private readonly static60sPath: string
-  private readonly staticImagesPath: string
+  private readonly projectRoot = getProjectRoot()
+  private readonly static60sPath = path.resolve(this.projectRoot, PATHS.STATIC_60S)
+  private readonly staticImagesPath = path.resolve(this.projectRoot, PATHS.STATIC_IMAGES)
 
   constructor() {
-    this.projectRoot = getProjectRoot()
-    this.static60sPath = path.resolve(this.projectRoot, PATHS.STATIC_60S)
-    this.staticImagesPath = path.resolve(this.projectRoot, PATHS.STATIC_IMAGES)
-
     ensureDir(this.static60sPath)
     ensureDir(this.staticImagesPath)
   }
@@ -48,6 +44,28 @@ export class StorageService {
 }
 
 export const storage = new StorageService()
+
+export function ensureDir(dirPath: string): void {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true })
+  }
+}
+
+export function fileExists(filePath: string): boolean {
+  return fs.existsSync(filePath)
+}
+
+export function readJsonFile<T>(filePath: string): T {
+  return JSON.parse(fs.readFileSync(filePath, 'utf-8'))
+}
+
+export function writeJsonFile<T>(filePath: string, data: T): void {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2))
+}
+
+export function getProjectRoot(): string {
+  return new URL('..', import.meta.url).pathname
+}
 
 export interface ParsedArticle {
   news: string[]

@@ -1,5 +1,5 @@
-import { DEFAULT_WECHAT_FAKE_ID, WECHAT_TOKEN, WECHAT_COOKIE, USER_AGENT } from '../constants'
 import { debug } from '../utils'
+import { DEFAULT_WECHAT_FAKE_ID, WECHAT_TOKEN, WECHAT_COOKIE, USER_AGENT } from '../constants'
 
 class WeChat {
   constructor(private readonly token = WECHAT_TOKEN, private readonly cookie = WECHAT_COOKIE) {}
@@ -8,12 +8,12 @@ class WeChat {
     return {
       Cookie: this.cookie,
       'X-Requested-With': 'XMLHttpRequest',
-      Referer: this.createReferer(),
+      Referer: this.#createReferer(),
       'User-Agent': USER_AGENT,
     }
   }
 
-  createReferer() {
+  #createReferer() {
     const sp = new URLSearchParams({
       t: 'media/appmsg_edit_v2',
       action: 'edit',

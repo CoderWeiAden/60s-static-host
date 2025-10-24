@@ -1,82 +1,10 @@
-import pangu from 'pangu'
 import { load } from 'cheerio'
-import { debug } from '../../utils'
-import { REGEX_PATTERNS, USER_AGENT } from '../../constants'
+import { debug } from '../utils'
+import { USER_AGENT } from '../constants'
 
-import type { ParsedArticle } from '../storage'
+import type { ParsedArticle } from './storage'
 
-export async function parsePost(url: string): Promise<ParsedArticle> {
-  debug('url', url)
-
-  const html = await fetch(url, { headers: { 'User-Agent': USER_AGENT } })
-    .then(e => e.text())
-    .catch(() => fetch(url).then(e => e.text()))
-
-  const $ = load(html)
-  const news: string[] = []
-
-  let tip = ''
-
-  const data = $('div.rich_media_content section p, section')
-    .toArray()
-    .map(e => $(e).text())
-    .filter(e => e.length >= 6)
-    .filter(text => !/；\d+、/.test(text))
-    .map(e => pangu.spacingText(e.trim()))
-
-  debug('data', data)
-
-  for (const line of data) {
-    if (REGEX_PATTERNS.NEWS.test(line)) {
-      news.push(
-        line
-          .replace(REGEX_PATTERNS.NEWS, '')
-          .replace(REGEX_PATTERNS.END, '')
-          .replace(REGEX_PATTERNS.AD, '')
-      )
-    } else if (REGEX_PATTERNS.TIP.test(line)) {
-      tip = line
-        .replace(REGEX_PATTERNS.TIP, '')
-        .replace(REGEX_PATTERNS.END, ''.replace(REGEX_PATTERNS.AD, ''))
-    }
-  }
-
-  const images = $('img')
-    .map((_, e) => $(e).attr('data-src') || '')
-    .toArray()
-    .filter(e => !!e)
-
-  debug('images', images)
-
-  const image = images.at(-1) || images.at(0) || ''
-
-  // const image = images.at(-3) || images.at(0) || ''
-
-  // const cover =
-  //   $('img')
-  //     .map((_, e) => ({
-  //       src: $(e).attr('data-src') || '',
-  //       dataS: $(e).attr('data-s') || '',
-  //     }))
-  //     .toArray()
-  //     .filter(e => e.dataS === '300,640')
-  //     .at(0)?.src || ''
-
-  const cover = images.at(0) || ''
-
-  debug('news', news)
-  debug('tip', tip)
-  debug('image', image)
-  debug('cover', cover)
-
-  return {
-    news,
-    image,
-    tip,
-    cover,
-    audio: { music: '', news: '' },
-  }
-}
+const EMPTY_RESULT = { news: [], cover: '', image: '', tip: '', audio: { music: '', news: '' } }
 
 const prompt = `
 # 你是一个 HTML 结构解析工具，能够熟练、完美的完成 HTML 内容解析和文本优化目标。接下来你需要解析一个微信公众号文章的 HTML，并按照要求通过指定的格式返回指定的内容。
@@ -131,4 +59,95 @@ const generationConfig = {
     propertyOrdering: ['news', 'cover', 'image', 'tip'],
     required: ['news', 'cover', 'image', 'tip'],
   },
+}
+
+export async function parsePostViaLLM(url: string): Promise<ParsedArticle> {
+  debug('url', url)
+
+  const apiKey = process.env.GEMINI_API_KEY
+
+  if (!apiKey) {
+    console.error("No Gemini API key provided, can't use LLM to parse article.")
+    return EMPTY_RESULT
+  }
+
+  const html = await fetch(url, { headers: { 'User-Agent': USER_AGENT } })
+    .then(e => e.text())
+    .catch(() => fetch(url).then(e => e.text()))
+
+  const $ = load(html)
+
+  const model = 'gemini-2.5-flash'
+  const mainHtml = $('#page-content').html() || ''
+
+  if (!mainHtml) {
+    console.error('No main HTML content found in the article.')
+    return EMPTY_RESULT
+  }
+
+  debug('model', model)
+
+  debug('main html length', mainHtml.length)
+
+  const timeStart = performance.now()
+
+  const options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text: prompt }] },
+      contents: [{ role: 'user', parts: [{ text: mainHtml }] }],
+      generationConfig,
+    }),
+  }
+
+  const thirdApi = `https://google-ai.deno.dev/v1beta/models/${model}:generateContent?key=${apiKey}`
+  const officialApi = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`
+
+  let response: { candidates: { content: { parts: { text: string }[] } }[] } | null = null
+
+  try {
+    response = (await (await fetch(thirdApi, options)).json()) as any
+  } catch (error) {
+    console.warn('First Gemini API request failed, retrying official domain...', error)
+
+    try {
+      response = (await (await fetch(officialApi, options)).json()) as any
+    } catch (error) {
+      console.error('Gemini API request failed:', error)
+    }
+  }
+
+  if (!response) {
+    console.error('No response from Gemini API.')
+    return EMPTY_RESULT
+  }
+
+  debug('LLM request cost (ms)', Math.round((performance.now() - timeStart) * 1000) / 1000)
+
+  // console.log('Gemini response:', JSON.stringify(response, null, 2))
+
+  try {
+    const data = JSON.parse(response?.candidates?.[0]?.content?.parts?.[0]?.text || '{}')
+
+    debug('LLM data', data)
+
+    if (!('news' in data) || !('cover' in data) || !('image' in data) || !('tip' in data)) {
+      console.error('Invalid Gemini response format:', data)
+
+      return EMPTY_RESULT
+    }
+
+    return {
+      news: data.news || [],
+      cover: data.cover || '',
+      image: data.image || '',
+      tip: data.tip || '',
+      audio: { music: '', news: '' },
+    }
+  } catch {
+    console.error('Failed to parse Gemini response:', response?.candidates?.[0]?.content?.parts)
+
+    return EMPTY_RESULT
+  }
 }

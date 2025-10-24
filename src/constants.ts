@@ -9,11 +9,3 @@ export const WECHAT_TOKEN = process.env.WECHAT_TOKEN ?? ''
 export const WECHAT_COOKIE = process.env.WECHAT_COOKIE ?? ''
 export const USER_AGENT = 'Mozilla/5.0 AppleWebKit/537.36 Chrome/132.0.0.0 Safari/537.36'
 export const PATHS = { STATIC_60S: 'static/60s', STATIC_IMAGES: 'static/images' }
-
-export const REGEX_PATTERNS = {
-  AD: /[;；]?(公众号)?\s*:?\s*[^；]+?\s*100\s*秒((读懂世界)|(知天下))\s*[;；]?/,
-  TIP: /^【([今每]日)?(微语|金句)】/,
-  NEWS: /^\d+、/,
-  END: /[；！～。，]\s*$/,
-  DATE_FORMAT: /^\d{4}-\d{2}-\d{2}$/,
-}

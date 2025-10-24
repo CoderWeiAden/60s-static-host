@@ -1,11 +1,16 @@
-import { wechat } from '../services/wechat'
-import { WECHAT_ACCOUNTS } from '../constants'
-import { storage, type SavedData } from '../services/storage'
-import { parsePost as parsePostViaLLM } from '../services/parser/llm-parser'
-import { parsePost as parsePostViaParser } from '../services/parser/parser'
-import { debug, getInputArgValue, isValidDateFormat, localeDate, localeTime } from '../utils'
+import { wechat } from './services/wechat'
+import { WECHAT_ACCOUNTS } from './constants'
+import { storage, type SavedData } from './services/storage'
+import { parsePostViaLLM as parsePostViaLLM } from './services/parser'
+import { parsePostViaLLM as parsePostViaParser } from './services/parser'
+import { debug, getInputArgValue, isValidDateFormat, localeDate, localeTime } from './utils'
 
-export async function runUpdateCommand(): Promise<void> {
+update60s().catch(error => {
+  console.error('Error updating 60s:', error)
+  process.exit(1)
+})
+
+export async function update60s(): Promise<void> {
   const inputDate = getInputArgValue('date')
 
   debug('inputDate', inputDate || '[EMPTY DATE]')
@@ -19,8 +24,8 @@ export async function runUpdateCommand(): Promise<void> {
 
   debug('date', date)
 
-  if (storage.hasData(date)) {
-    console.log(`Data of [${date}] already exists, skipped`)
+  if (storage.hasData(date) && storage.hasImage(date)) {
+    console.log(`Data & Image of [${date}] already exists, skipped`)
     process.exit(0)
   }
 
@@ -30,7 +35,6 @@ export async function runUpdateCommand(): Promise<void> {
   const query = `${queryDate} ${queryWord}`
 
   debug('year-month-day', { year, month, day })
-
   debug('query', query)
 
   for (const account of WECHAT_ACCOUNTS) {
@@ -49,7 +53,6 @@ export async function runUpdateCommand(): Promise<void> {
     }
 
     debug('result.posts', result.posts)
-
     debug('result.posts.length', result.posts.length)
 
     const targetArticle = result.posts.find(e => {
@@ -65,7 +68,6 @@ export async function runUpdateCommand(): Promise<void> {
     }
 
     debug('targetArticle', targetArticle)
-
     debug('targetArticle.link', targetArticle.link)
 
     const parsed = await parsePostViaLLM(targetArticle.link).catch(async error => {
