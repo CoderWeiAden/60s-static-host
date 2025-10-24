@@ -34,6 +34,12 @@ export class StorageService {
     console.log(`Data of [${date}] saved`)
   }
 
+  saveImage(date: string, image: Buffer): void {
+    const filePath = this.getImageFilePath(date)
+    fs.writeFileSync(filePath, image)
+    console.log(`Image of [${date}] saved`)
+  }
+
   loadData(date: string): SavedData | null {
     const filePath = this.getDataFilePath(date)
     if (!fileExists(filePath)) {

@@ -4,6 +4,8 @@ export const WECHAT_ACCOUNTS = [
   { name: '每天3分钟读懂世界', fakeId: 'MzkwNjY1ODIxNw==', wechatId: 'hao36501' },
 ]
 
+export const IS_IN_CI = !!process.env.CI
+
 export const DEFAULT_WECHAT_FAKE_ID = WECHAT_ACCOUNTS[0]?.fakeId ?? ''
 export const WECHAT_TOKEN = process.env.WECHAT_TOKEN ?? ''
 export const WECHAT_COOKIE = process.env.WECHAT_COOKIE ?? ''

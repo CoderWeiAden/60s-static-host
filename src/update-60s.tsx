@@ -4,6 +4,8 @@ import { storage, type SavedData } from './services/storage'
 import { parsePostViaLLM as parsePostViaLLM } from './services/parser'
 import { parsePostViaLLM as parsePostViaParser } from './services/parser'
 import { debug, getInputArgValue, isValidDateFormat, localeDate, localeTime } from './utils'
+import { renderer } from './services/renderer'
+import { NewsCard } from './components/news'
 
 update60s().catch(error => {
   console.error('Error updating 60s:', error)
@@ -107,5 +109,11 @@ export async function update60s(): Promise<void> {
     debug('data', data)
 
     storage.saveData(date, data)
+
+    await renderer.prepare()
+    const buffer = await renderer.render(<NewsCard />)
+    await renderer.destroy()
+
+    storage.saveImage(date, buffer)
   }
 }

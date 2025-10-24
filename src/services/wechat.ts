@@ -33,7 +33,7 @@ class WeChat {
     count?: number
     query?: string
   }): Promise<{ isOK: boolean; posts: PostItem[]; count: number; error: string | null }> {
-    const { fakeId = DEFAULT_WECHAT_FAKE_ID, query = '', begin = 0, count = 4 } = options
+    const { fakeId = DEFAULT_WECHAT_FAKE_ID, query = '', begin = 0, count = 6 } = options
 
     debug('options', options)
 
@@ -71,7 +71,13 @@ class WeChat {
 
     debug('app_msg_cnt', data?.app_msg_cnt)
     debug('app_msg_list', data?.app_msg_list)
-    debug('app_msg_list title list', data?.app_msg_list?.map(e => e.title)?.join(', '))
+
+    debug(
+      'app_msg_list title list',
+      `\n${data?.app_msg_list
+        ?.map((e, idx) => `${idx + 1}. ${e.title}`.replace(/<\/?em>/g, ''))
+        ?.join('\n')}`
+    )
 
     return {
       isOK: isOK,

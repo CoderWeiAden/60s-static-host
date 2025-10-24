@@ -1,5 +1,9 @@
 export function debug(name: string, ...values: unknown[]): void {
-  console.log(`[${new Date().toISOString()}] [DEBUG] [${name}] => `, ...values, `\n`)
+  console.log(
+    `[${new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' })}] [DEBUG] [${name}] => `,
+    ...values,
+    `\n`
+  )
 }
 
 export function getInputArgValue(argName: string): string | undefined {

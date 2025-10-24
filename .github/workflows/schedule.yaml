@@ -31,10 +31,47 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Install Chinese fonts
+      # 缓存 Chromium
+      - name: Cache Chromium
+        id: cache-chromium
+        uses: actions/cache@v3
+        with:
+          path: .chromium
+          key: chromium-build-v1
+
+      # 缓存字体
+      - name: Cache Fonts
+        id: cache-fonts
+        uses: actions/cache@v3
+        with:
+          path: .fonts
+          key: fonts-noto-v1
+
+      # 如果 Chromium 缓存不存在，则下载
+      - name: Download Chromium if not cached
+        if: steps.cache-chromium.outputs.cache-hit != 'true'
         run: |
+          mkdir -p .chromium
+          curl -L https://storage.googleapis.com/chromium-browser-snapshots/Linux_x64/1181205/chrome-linux.zip -o chrome-linux.zip
+          unzip chrome-linux.zip -d .chromium
+          rm chrome-linux.zip
+
+      # 如果字体缓存不存在，则下载并安装到缓存文件夹
+      - name: Download Fonts if not cached
+        if: steps.cache-fonts.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p .fonts
           sudo apt-get update
-          sudo apt-get install -y fonts-noto-cjk
+          sudo apt-get install -y fonts-noto-cjk fonts-noto-color-emoji fonts-freefont-ttf
+          # 拷贝字体到缓存目录
+          cp -r /usr/share/fonts/* .fonts/
+
+      # 安装字体到系统
+      - name: Install Cached Fonts
+        run: |
+          sudo mkdir -p /usr/share/fonts/custom
+          sudo cp -r .fonts/* /usr/share/fonts/custom/
+          sudo fc-cache -fv
 
       - name: Fetch data & Update & Render
         env:

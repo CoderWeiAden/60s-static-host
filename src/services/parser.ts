@@ -71,21 +71,22 @@ export async function parsePostViaLLM(url: string): Promise<ParsedArticle> {
     return EMPTY_RESULT
   }
 
+  const model = 'gemini-2.5-flash'
+
+  debug('model', model)
+
   const html = await fetch(url, { headers: { 'User-Agent': USER_AGENT } })
     .then(e => e.text())
     .catch(() => fetch(url).then(e => e.text()))
 
   const $ = load(html)
 
-  const model = 'gemini-2.5-flash'
   const mainHtml = $('#page-content').html() || ''
 
   if (!mainHtml) {
     console.error('No main HTML content found in the article.')
     return EMPTY_RESULT
   }
-
-  debug('model', model)
 
   debug('main html length', mainHtml.length)
 
@@ -123,11 +124,16 @@ export async function parsePostViaLLM(url: string): Promise<ParsedArticle> {
     return EMPTY_RESULT
   }
 
-  debug('LLM request cost (ms)', Math.round((performance.now() - timeStart) * 1000) / 1000)
+  debug(
+    'LLM request cost (ms)',
+    (Math.round((performance.now() - timeStart) * 1000) / 1000).toLocaleString('zh-CN')
+  )
 
   // console.log('Gemini response:', JSON.stringify(response, null, 2))
 
   try {
+    debug('LLM response', response)
+
     const data = JSON.parse(response?.candidates?.[0]?.content?.parts?.[0]?.text || '{}')
 
     debug('LLM data', data)
