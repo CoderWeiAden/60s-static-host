@@ -6,12 +6,9 @@ import { formatSavedData } from '../src/utils'
 import type { SavedData } from '../src/services/storage'
 
 async function reorderJsonFields(): Promise<void> {
-  const projectRoot = new URL('..', import.meta.url).pathname.replace(/\/$/, '')
-  const static60sPath = path.resolve(projectRoot, PATHS.STATIC_60S)
-
   // 获取所有 JSON 文件
   const jsonFiles = fs
-    .readdirSync(static60sPath)
+    .readdirSync(PATHS.STATIC_60S)
     .filter(file => file.endsWith('.json'))
     .sort()
 
@@ -22,7 +19,7 @@ async function reorderJsonFields(): Promise<void> {
 
   // 遍历每个 JSON 文件
   for (const file of jsonFiles) {
-    const filePath = path.resolve(static60sPath, file)
+    const filePath = path.resolve(PATHS.STATIC_60S, file)
 
     try {
       // 读取 JSON 文件

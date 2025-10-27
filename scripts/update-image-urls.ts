@@ -2,32 +2,14 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { PATHS } from '../src/constants'
 
+import type { SavedData } from '../src/services/storage'
+
 const CDN_BASE_URL = 'https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images'
 
-interface NewsData {
-  date: string
-  news: string[]
-  cover?: string
-  tip?: string
-  audio?: {
-    music?: string
-    news?: string
-  }
-  image?: string
-  link?: string
-  created?: string
-  created_at?: number
-  updated?: string
-  updated_at?: number
-}
-
 async function updateImageUrls(): Promise<void> {
-  const projectRoot = new URL('..', import.meta.url).pathname.replace(/\/$/, '')
-  const static60sPath = path.resolve(projectRoot, PATHS.STATIC_60S)
-
   // 获取所有 JSON 文件
   const jsonFiles = fs
-    .readdirSync(static60sPath)
+    .readdirSync(PATHS.STATIC_60S)
     .filter(file => file.endsWith('.json'))
     .sort()
 
@@ -39,13 +21,13 @@ async function updateImageUrls(): Promise<void> {
 
   // 遍历每个 JSON 文件
   for (const file of jsonFiles) {
-    const filePath = path.resolve(static60sPath, file)
+    const filePath = path.resolve(PATHS.STATIC_60S, file)
     const date = file.replace('.json', '')
 
     try {
       // 读取 JSON 文件
       const content = fs.readFileSync(filePath, 'utf-8')
-      const data: NewsData = JSON.parse(content)
+      const data: SavedData = JSON.parse(content)
 
       // 期望的图片 URL
       const expectedImageUrl = `${CDN_BASE_URL}/${date}.png`

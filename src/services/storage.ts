@@ -6,21 +6,17 @@ import { PATHS } from '../constants'
 import { formatSavedData, log } from '../utils'
 
 export class StorageService {
-  private readonly projectRoot = getProjectRoot()
-  private readonly static60sPath = path.resolve(this.projectRoot, PATHS.STATIC_60S)
-  private readonly staticImagesPath = path.resolve(this.projectRoot, PATHS.STATIC_IMAGES)
-
   constructor() {
-    ensureDirSync(this.static60sPath)
-    ensureDirSync(this.staticImagesPath)
+    ensureDirSync(PATHS.STATIC_60S)
+    ensureDirSync(PATHS.STATIC_IMAGES)
   }
 
   getDataFilePath(date: string): string {
-    return path.resolve(this.static60sPath, `${date}.json`)
+    return path.resolve(PATHS.STATIC_60S, `${date}.json`)
   }
 
   getImageFilePath(date: string): string {
-    return path.resolve(this.staticImagesPath, `${date}.png`)
+    return path.resolve(PATHS.STATIC_IMAGES, `${date}.png`)
   }
 
   hasData(date: string): boolean {
@@ -100,18 +96,10 @@ export async function writeJsonFile<T>(filePath: string, data: T): Promise<void>
   await fs.writeFile(filePath, JSON.stringify(data, null, 2))
 }
 
-export function getProjectRoot(): string {
-  return new URL('../..', import.meta.url).pathname
-}
-
 export interface ParsedArticle {
   news: string[]
   tip: string
   cover: string
-  audio: {
-    music: string
-    news: string
-  }
 }
 
 export interface SavedData extends ParsedArticle {

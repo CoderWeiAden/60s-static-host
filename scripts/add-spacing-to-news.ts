@@ -3,26 +3,10 @@ import path from 'node:path'
 import pangu from 'pangu'
 import { PATHS } from '../src/constants'
 
-interface NewsData {
-  date: string
-  news: string[]
-  cover?: string
-  tip?: string
-  audio?: {
-    music?: string
-    news?: string
-  }
-  image?: string
-  link?: string
-  created?: string
-  created_at?: number
-  updated?: string
-  updated_at?: number
-}
+import type { SavedData } from '../src/services/storage'
 
 async function addSpacingToNews(): Promise<void> {
-  const projectRoot = new URL('..', import.meta.url).pathname.replace(/\/$/, '')
-  const static60sPath = path.resolve(projectRoot, PATHS.STATIC_60S)
+  const static60sPath = PATHS.STATIC_60S
 
   // 获取所有 JSON 文件
   const jsonFiles = fs
@@ -43,7 +27,7 @@ async function addSpacingToNews(): Promise<void> {
     try {
       // 读取 JSON 文件
       const content = fs.readFileSync(filePath, 'utf-8')
-      const data: NewsData = JSON.parse(content)
+      const data: SavedData = JSON.parse(content)
 
       // 标记是否有更新
       let hasUpdates = false

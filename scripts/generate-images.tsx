@@ -12,13 +12,9 @@ generateImages().catch(error => {
 })
 
 async function generateImages(): Promise<void> {
-  const projectRoot = new URL('..', import.meta.url).pathname.replace(/\/$/, '')
-  const static60sPath = path.resolve(projectRoot, PATHS.STATIC_60S)
-  const staticImagesPath = path.resolve(projectRoot, PATHS.STATIC_IMAGES)
-
   // 获取所有 JSON 文件
   const jsonFiles = fs
-    .readdirSync(static60sPath)
+    .readdirSync(PATHS.STATIC_60S)
     .filter(file => file.endsWith('.json'))
     .sort()
 
@@ -28,7 +24,7 @@ async function generateImages(): Promise<void> {
   const missingDates: string[] = []
   for (const file of jsonFiles) {
     const date = file.replace('.json', '')
-    const imagePath = path.resolve(staticImagesPath, `${date}.png`)
+    const imagePath = path.resolve(PATHS.STATIC_IMAGES, `${date}.png`)
     if (!fs.existsSync(imagePath)) {
       missingDates.push(date)
     }

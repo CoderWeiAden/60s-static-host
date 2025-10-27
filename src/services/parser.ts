@@ -144,7 +144,6 @@ export async function parsePostViaLLM(url: string): Promise<ParsedArticle> {
       news: data.news || [],
       cover: data.cover || '',
       tip: data.tip || '',
-      audio: { music: '', news: '' },
     }
   } catch {
     console.error('Failed to parse Gemini response:', response?.candidates?.[0]?.content?.parts)

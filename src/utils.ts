@@ -82,7 +82,6 @@ export function formatSavedData(data: SavedData): SavedData {
       'tip',
       'image',
       'link',
-      'audio',
       'created',
       'created_at',
       'updated',
@@ -104,6 +103,9 @@ export function formatSavedData(data: SavedData): SavedData {
         ordered[key] = data[key]
       }
     }
+
+    // 删除 audio 字段
+    delete ordered.audio
 
     return ordered
   }

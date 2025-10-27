@@ -117,7 +117,7 @@ export async function update60s(): Promise<void> {
       ...parsed,
       image: `https://cdn.jsdmirror.com/gh/vikiboss/60s-static-host@main/static/images/${date}.png`,
       cover: parsed.cover || targetArticle.cover,
-      link: targetArticle.link.split('&chksm=')[0] || '',
+      link: targetArticle.link?.split('&chksm=')[0] || '',
       created: localeTime(targetArticle.create_time * 1000),
       created_at: targetArticle.create_time * 1000,
       updated: localeTime(targetArticle.update_time * 1000),
