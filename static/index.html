@@ -166,9 +166,11 @@
               <input
                 type="date"
                 id="dateInput"
+                onchange="updateButtonStates(); loadData();"
                 class="px-3 py-2 bg-amber-50/50 border border-stone-300 rounded-lg text-stone-700 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition-all"
               />
               <button
+                id="prevBtn"
                 onclick="adjustDate(-1)"
                 class="px-3 py-2 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-sm font-medium transition-all"
                 title="前一天"
@@ -176,8 +178,9 @@
                 ←
               </button>
               <button
+                id="nextBtn"
                 onclick="adjustDate(1)"
-                class="px-3 py-2 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-sm font-medium transition-all"
+                class="px-3 py-2 bg-stone-200 hover:bg-stone-300 text-stone-700 rounded-lg text-sm font-medium transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-stone-200"
                 title="后一天"
               >
                 →
@@ -467,6 +470,9 @@
         // 显示顶部日期
         updateHeaderDate(today)
 
+        // 更新按钮状态
+        updateButtonStates()
+
         // 自动加载今日数据
         loadData()
       }
@@ -487,10 +493,26 @@
         ).textContent = `${year}年${month}月${day}日 星期${weekDay}`
       }
 
+      // 更新按钮状态
+      function updateButtonStates() {
+        const dateInput = document.getElementById('dateInput')
+        const selectedDate = dateInput.value
+        const today = formatDate(new Date())
+        const nextBtn = document.getElementById('nextBtn')
+
+        // 如果选中的日期是今天,禁用"后一天"按钮
+        if (selectedDate === today) {
+          nextBtn.disabled = true
+        } else {
+          nextBtn.disabled = false
+        }
+      }
+
       // 设置为今天
       function setToday() {
         const today = new Date()
         document.getElementById('dateInput').value = formatDate(today)
+        updateButtonStates()
         loadData()
       }
 
@@ -498,19 +520,9 @@
       function adjustDate(days) {
         const dateInput = document.getElementById('dateInput')
         const currentDate = new Date(dateInput.value || new Date())
-        const newDate = new Date(currentDate)
-        newDate.setDate(currentDate.getDate() + days)
-
-        // 禁止调整到未来日期
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
-        newDate.setHours(0, 0, 0, 0)
-
-        if (newDate > today) {
-          return // 如果新日期超过今天,不做任何操作
-        }
-
-        dateInput.value = formatDate(newDate)
+        currentDate.setDate(currentDate.getDate() + days)
+        dateInput.value = formatDate(currentDate)
+        updateButtonStates()
         loadData()
       }
 
