@@ -90,16 +90,14 @@ export function NewsCard({ data }: { data: NewsData }) {
       </div>
 
       <div className='relative bg-amber-50/50 border-t border-stone-300/50 px-8 py-6'>
-        <div className='absolute top-0 right-6 w-3 h-3 bg-amber-200/40 transform rotate-45 translate-y-1'></div>
-        <div className='absolute top-2 right-8 w-1 h-1 bg-amber-300/60 rounded-full'></div>
-
         <div className='text-center relative'>
           <div className='relative inline-block'>
             <p className='text-stone-700 leading-relaxed text-center px-6 italic relative z-10'>
-              「 {data.tip} 」
+              <span className='font-bold text-amber-600/36 mx-2'>「</span>
+              {data.tip}
+              <span className='font-bold text-amber-600/36 mx-2'>」</span>
             </p>
-
-            <div className='absolute inset-0 bg-amber-50/30 rounded-lg transform rotate-0.5 scale-105 -z-0'></div>
+            <div className='absolute inset-0 bg-amber-50/30 rounded-lg transform rotate-0.5 scale-105 -z-10'></div>
           </div>
         </div>
       </div>
@@ -110,12 +108,12 @@ export function NewsCard({ data }: { data: NewsData }) {
 
           <div className='text-stone-500 space-y-1.5 font-light'>
             <div className='tracking-wide'>更新时间：{localeTime(data.created_at)}</div>
-            <div className='text-stone-400 tracking-wider'>共 {data.news.length} 条精选新闻</div>
+            <div className='tracking-wider'>共 {data.news.length} 条精选新闻</div>
           </div>
 
-          <div className='text-right text-stone-400 space-y-1.5 font-light'>
+          <div className='text-stone-500 text-right space-y-1.5 font-light'>
             <div className='tracking-wide'>@GitHub vikiboss/60s</div>
-            <div className='text-[10px] tracking-widest opacity-75'>
+            <div className='text-[10px] tracking-widest'>
               React 界面 + TailwindCSS 样式 + Puppeteer 渲染
             </div>
           </div>

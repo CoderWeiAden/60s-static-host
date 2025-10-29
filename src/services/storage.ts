@@ -27,11 +27,11 @@ export class StorageService {
     return fileExistsSync(this.getImageFilePath(date))
   }
 
-  async saveData(date: string, data: SavedData): Promise<void> {
-    const filePath = this.getDataFilePath(date)
+  async saveData(data: SavedData): Promise<void> {
+    const filePath = this.getDataFilePath(data.date)
     const formattedData = formatSavedData(data)
     await writeJsonFile(filePath, formattedData)
-    log(`Data of [${date}] saved`)
+    log(`Data of [${data.date}] saved`)
   }
 
   async saveImage(date: string, image: Buffer): Promise<void> {

@@ -1,4 +1,3 @@
-import pangu from 'pangu'
 import { load } from 'cheerio'
 import { debug } from '../utils'
 import { USER_AGENT } from '../constants'

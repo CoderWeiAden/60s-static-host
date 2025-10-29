@@ -8,7 +8,7 @@ const Card = (props: { data: string[]; image: string }) => {
 
   return (
     <div className='text-xs size-full'>
-      <div>list</div>
+      <div>List</div>
       <pre>{JSON.stringify(fetchedData, null, 2)}</pre>
       <div>
         {props.data.map((item, idx) => (
@@ -27,7 +27,9 @@ const fetchData = async () => await (await fetch('https://60s.viki.moe/v2/60s'))
 async function renderReactComponent() {
   await renderer.prepare()
 
+  const data = await fetchData()
   const buffer = await renderer.render(<NewsCard data={data} />)
+  // const buffer = await renderer.render(<Card data={data} image={data.image} />)
 
   fs.writeFileSync('test/screenshot.png', buffer)
 

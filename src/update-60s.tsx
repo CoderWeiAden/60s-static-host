@@ -5,7 +5,15 @@ import { WECHAT_ACCOUNTS } from './constants'
 import { storage, type SavedData } from './services/storage'
 import { parsePostViaLLM as parsePostViaLLM } from './services/parser'
 import { parsePostViaLLM as parsePostViaParser } from './services/parser'
-import { debug, getInputArgValue, isValidDateFormat, localeDate, localeTime, log } from './utils'
+import {
+  debug,
+  formatSavedData,
+  getInputArgValue,
+  isValidDateFormat,
+  localeDate,
+  localeTime,
+  log,
+} from './utils'
 
 update60s().catch(error => {
   console.error('Error updating 60s:', error)
@@ -41,7 +49,7 @@ export async function update60s(): Promise<void> {
 
     log(`Data of [${date}] found, generating image...`)
 
-    await saveImage(date, data)
+    await saveImage(data)
 
     process.exit(0)
   }
@@ -126,8 +134,8 @@ export async function update60s(): Promise<void> {
 
     debug('data', data)
 
-    await storage.saveData(date, data)
-    await saveImage(date, data)
+    await storage.saveData(data)
+    await saveImage(data)
 
     log('Update 60s completed')
 
@@ -135,9 +143,9 @@ export async function update60s(): Promise<void> {
   }
 }
 
-async function saveImage(date: string, data: SavedData): Promise<void> {
+async function saveImage(data: SavedData): Promise<void> {
   await renderer.prepare()
-  const buffer = await renderer.render(<NewsCard data={data} />)
+  const buffer = await renderer.render(<NewsCard data={formatSavedData(data)} />)
   await renderer.destroy()
   await storage.saveImage(data.date, buffer)
 }
