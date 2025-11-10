@@ -38,25 +38,31 @@ export function NewsCard({ data }: { data: NewsData }) {
         <div className='w-16 h-0.5 bg-gradient-to-l from-transparent via-amber-400/60 to-transparent rounded-full'></div>
       </div>
 
-      <div className='bg-gradient-to-r from-stone-50/80 via-amber-50/60 to-stone-50/80 px-8 py-8 border-b border-stone-200/60'>
-        <div className='text-center space-y-3 relative'>
+      <div className='bg-gradient-to-r from-stone-50/80 via-amber-50/60 to-stone-50/80 px-8 py-6 border-b border-stone-200/60'>
+        <div className='flex flex-row items-center justify-between gap-6 relative'>
           <div className='absolute -top-2 left-1/2 transform -translate-x-1/2 flex space-x-1'>
             <div className='w-0.5 h-0.5 bg-amber-400/40 rounded-full'></div>
             <div className='w-1 h-0.5 bg-amber-300/40 rounded-full'></div>
             <div className='w-0.5 h-0.5 bg-amber-400/40 rounded-full'></div>
           </div>
 
-          <h1 className='text-3xl font-extralight text-stone-800 tracking-[0.3em] leading-tight'>
-            每天 <span className='font-normal text-amber-700 tracking-normal'>60s</span> 读懂世界
-          </h1>
-          <div className='text-base text-stone-600 tracking-[0.15em] space-x-1 font-light'>
-            <span>
-              {year}年{month}月{day}日
-            </span>
-            <span className='mx-4 text-amber-400/60'>❋</span>
-            <span>{getDayOfWeek(data.date)}</span>
-            <span className='mx-4 text-amber-400/60'>❋</span>
-            <span className='tracking-wider'>农历{lunarDate}</span>
+          <div className='text-left shrink-0 flex flex-col gap-1'>
+            <h1 className='text-3xl font-light text-stone-800 tracking-[0.15rem] leading-tight my-1'>
+              每天 <span className='font-medium text-amber-600 tracking-normal'>60s</span> 读懂世界
+            </h1>
+            <div className='text-md text-stone-600 tracking-[0.15rem] font-light leading-tight'>
+              <span>
+                {year}年{month}月{day}日
+              </span>
+              <span className='mx-2 text-amber-400/60'>❋</span>
+              <span>农历 · {lunarDate}</span>
+            </div>
+          </div>
+
+          <div className='w-[3px] h-16 bg-stone-400/42 transform -skew-x-16'></div>
+
+          <div className='flex-shrink-0 font-light text-right text-6xl text-stone-700 tracking-[0.3rem]'>
+            {getDayOfWeek(data.date)}
           </div>
         </div>
       </div>
@@ -68,7 +74,7 @@ export function NewsCard({ data }: { data: NewsData }) {
           {data.news.map((item, index) => (
             <div key={index} className='group relative'>
               <div className='flex items-start space-x-4 py-2 relative'>
-                <div className='flex-shrink-0 w-4 h-4 rounded-full bg-stone-100/90 flex items-center justify-center text-[9px] text-stone-400 border border-stone-200/60 mt-1 shadow-sm'>
+                <div className='flex-shrink-0 w-4 h-4 rounded-full bg-stone-200/60 flex items-center justify-center text-[10px] text-stone-500 border border-stone-300/60 mt-1'>
                   {String(index + 1)}
                 </div>
                 <div className='flex-1'>
