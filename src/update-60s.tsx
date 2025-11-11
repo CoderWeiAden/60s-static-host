@@ -3,8 +3,7 @@ import { renderer } from './services/renderer'
 import { NewsCard } from './components/news'
 import { WECHAT_ACCOUNTS } from './constants'
 import { storage, type SavedData } from './services/storage'
-import { parsePostViaLLM as parsePostViaLLM } from './services/parser'
-import { parsePostViaLLM as parsePostViaParser } from './services/parser'
+import { parsePostViaLLM } from './services/parser'
 import {
   debug,
   formatSavedData,
@@ -72,7 +71,17 @@ export async function update60s(): Promise<void> {
 
     if (!result.isOK) {
       console.warn(`Failed to fetch posts for account: ${account.name}, error: ${result.error}`)
-      continue
+
+      const isCookieExpired = result.error?.includes('invalid session')
+
+      if (isCookieExpired) {
+        console.warn('Cookie have expired, please update the cookie and try again.')
+        const hourInBeijing = new Date().getUTCHours() + 8
+        // exit with code 1 if before 2am Beijing time, else exit with code 0, to reduce CI alert noise
+        process.exit(hourInBeijing <= 3 ? 1 : 0)
+      } else {
+        continue
+      }
     }
 
     if (result.posts.length === 0) {
@@ -98,12 +107,12 @@ export async function update60s(): Promise<void> {
     debug('targetArticle', targetArticle)
 
     const parsed = await parsePostViaLLM(targetArticle.link).catch(async error => {
-      console.warn(`LLM parser failed, fallback to standard parser...`, error)
+      console.warn(`LLM parser failed, retrying... error:`, error)
 
       try {
-        return await parsePostViaParser(targetArticle.link)
+        return await parsePostViaLLM(targetArticle.link)
       } catch (error) {
-        console.warn(`Standard parser failed, error: ${error}`)
+        console.warn(`LLM parser retry failed. error:`, error)
         return null
       }
     })
