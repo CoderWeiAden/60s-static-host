@@ -108,7 +108,7 @@ export function NewsCard({ data }: { data: NewsData }) {
         </div>
       </div>
 
-      <div className='bg-gradient-to-r from-stone-100/70 via-amber-50/40 to-stone-100/70 border-t border-stone-200/50 px-8 py-5 rounded-b-3xl'>
+      <div className='bg-gradient-to-r from-stone-100/70 via-amber-50/40 to-stone-100/70 border-t border-stone-200/50 px-8 py-5'>
         <div className='flex items-center justify-between text-xs relative'>
           <div className='absolute top-0 left-1/2 transform -translate-x-1/2 w-16 h-px bg-gradient-to-r from-transparent via-amber-300/30 to-transparent'></div>
 
