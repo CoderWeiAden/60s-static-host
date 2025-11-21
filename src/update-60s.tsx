@@ -76,8 +76,8 @@ export async function update60s(): Promise<void> {
 
       if (isCookieExpired) {
         console.warn('Cookie have expired, please update the cookie and try again.')
-        const hourInBeijing = new Date().getUTCHours() + 8
-        // exit with code 1 if before 2am Beijing time, else exit with code 0, to reduce CI alert noise
+        const hourInBeijing = (new Date().getUTCHours() + 8) % 24
+        // exit with code 1 if before 3am Beijing time, else exit with code 0, to reduce CI alert noise
         process.exit(hourInBeijing <= 3 ? 1 : 0)
       } else {
         continue
