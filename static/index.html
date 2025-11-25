@@ -6,7 +6,7 @@
     <title>每天 60s 读懂世界 - 每日新闻</title>
     <meta name="description" content="每天60秒读懂世界 - 每日新闻精选" />
     <meta name="theme-color" content="#fef3c7" />
-
+    <link rel="shortcut icon" href="/favicon.ico" />
     <!-- Tailwind CSS Play CDN (稳定且不会被拦截) -->
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -460,20 +460,40 @@
     <script>
       // 初始化
       function init() {
-        // 设置当前日期
-        const today = new Date()
-        const dateStr = formatDate(today)
         const dateInput = document.getElementById('dateInput')
-        dateInput.value = dateStr
-        dateInput.max = dateStr // 禁止选择未来日期
+        const today = new Date()
+        const todayStr = formatDate(today)
+
+        // 设置最大可选日期为今天
+        dateInput.max = todayStr
+
+        // 解析 URL 参数
+        const urlParams = new URLSearchParams(window.location.search)
+        const dateParam = urlParams.get('date')
+
+        // 验证日期参数格式
+        let initialDate = todayStr
+        if (dateParam && /^\d{4}-\d{2}-\d{2}$/.test(dateParam)) {
+          const paramDate = new Date(dateParam)
+          const todayDate = new Date(todayStr)
+
+          // 确保日期参数不晚于今天
+          if (paramDate <= todayDate && !isNaN(paramDate.getTime())) {
+            initialDate = dateParam
+          }
+        }
+
+        // 设置日期输入框的值
+        dateInput.value = initialDate
 
         // 显示顶部日期
-        updateHeaderDate(today)
+        const displayDate = new Date(initialDate)
+        updateHeaderDate(displayDate)
 
         // 更新按钮状态
         updateButtonStates()
 
-        // 自动加载今日数据
+        // 自动加载数据
         loadData()
       }
 
@@ -532,6 +552,11 @@
           alert('请选择日期')
           return
         }
+
+        // 更新 URL 参数,方便分享
+        const newUrl = new URL(window.location)
+        newUrl.searchParams.set('date', date)
+        window.history.replaceState({}, '', newUrl)
 
         const container = document.getElementById('previewContainer')
         container.innerHTML = '<div class="text-center py-12 text-stone-500">加载中...</div>'
